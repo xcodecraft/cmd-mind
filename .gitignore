@@ -1,0 +1,17 @@
+.svn
+*.swp
+*.pyc
+_rg/*.data
+cscope.*
+*.log
+tags
+rigger.data
+run
+test/data/_router.idx
+test/data/files/prj_use.yaml
+tmp/_rg/
+demo/conf/used
+src/rg_env.py
+*.out
+sonar-project.properties
+pub_this.sh

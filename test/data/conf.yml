@@ -1,0 +1,30 @@
+pylon_console:
+    - !cmd
+        name : "all"
+        args :
+            - !arg
+                name: "prj"
+                default: ""
+                help : "<prj>"
+            - !arg
+                name: "env"
+
+    - !cmd
+        name : "patch"
+        args :
+            - !arg
+                name: "prj"
+                default: ""
+                help : "<prj>"
+            - !arg
+                name: "env"
+
+
+    - !cmd
+        name : "help"
+        - !cmd
+            name : "all"
+            cmd  : "cmd_help_all"
+        - !cmd
+            name : "path"
+            cmd  : "cmd_help_path"
