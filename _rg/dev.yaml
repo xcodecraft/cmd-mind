@@ -1,14 +1,14 @@
 _dev:
     - !C.project
-        name : "rigger-ng"
-        root : "${HOME}/devspace/rigger-ng"
+        name : "console-ng"
+        root : "./"
     - !C.version
         file : "src/version.txt"
     - !C.git
-        remote : "git@github.com:xcodecraft/rigger-ng.git"
+        remote : "git@github.com:xcodecraft/console-ng.git"
     - !C.sonar
         runner   : "/data/x/tools/sonar/bin/sonar-runner"
-        qube     : "http://sonar.ayibang.cn"
+        qube     : "http://sonar.xcodecraft.cn"
         language : "python"
         src      : "src"
 
