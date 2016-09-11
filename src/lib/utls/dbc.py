@@ -1,5 +1,4 @@
 #coding=utf-8
-import interface
 import os
 def not_none(val,errmsg) :
     if val is   None :
