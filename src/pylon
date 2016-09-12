@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
 if __name__ == '__main__':
+    import env
+    env.set_module_path()
+    console.run()
     code = 0
     exit(code)
