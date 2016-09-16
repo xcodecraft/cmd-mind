@@ -1,5 +1,5 @@
 #coding=utf-8
-import cmd
+import error
 import os,string
 class conf_obj :
     name = ""
@@ -28,8 +28,7 @@ class cmd(conf_obj) :
             execmd = str(cmder)
             print("\n")
             print(execmd)
-
-            # os.system(execmd)
+            os.system(execmd)
         else:
             args = cmder.args
             # map hotkey and name to same value ;
@@ -38,11 +37,16 @@ class cmd(conf_obj) :
                     if a.hotkey in args :
                         args[a.name] = args[a.hotkey]
 
-            calltpl = string.Template(self.call)
-            execmd = calltpl.substitute(args)
-            print("\n")
-            print(execmd)
-            os.system(execmd)
+            try:
+                calltpl = string.Template(self.call)
+                execmd = calltpl.substitute(args)
+                print("\n")
+                print(execmd)
+                os.system(execmd)
+            except KeyError as e :
+                key = str(e)
+                msg = "[ %s ] less %s" %(self.call,key)
+                raise error.icmd_exception(msg)
 
 class arg(conf_obj) :
     hotkey  = None
