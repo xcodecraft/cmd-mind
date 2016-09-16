@@ -1,0 +1,22 @@
+!cmd
+    name : "git"
+    subs :
+        - !cmd
+            name : "ci"
+            call : "git commit -a -m $msg"
+            args :
+                - !arg
+                    hotkey : "m"
+                    name   : "msg"
+
+        - !cmd
+            name : "add"
+
+        - !cmd
+            name : "push"
+            args :
+                - !arg
+                    name: "prj"
+                    default: ""
+                - !arg
+                    name: "env"

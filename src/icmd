@@ -1,0 +1,28 @@
+#!/usr/bin/python
+import sys,xenv,os.path
+
+if __name__ == '__main__':
+    xenv.set_modul_path()
+    argv = sys.argv
+
+    main_cmd = os.path.basename(argv[0])
+    conf  = os.environ['ICMD_CONF']
+    mcmd  = os.environ['ICMD_MAIN']
+    cmd_line = mcmd
+    for word in argv[1:] :
+       cmd_line = cmd_line + " " + word
+
+    import xcmd , define,error
+    import impl.console , impl.cmd_parser, impl.conf_iter ,impl.conf_yaml
+
+    try:
+        data     = impl.conf_yaml.load_conf(conf,"!","define.")
+        cmder    = xcmd.commander(main_cmd)
+        impl.cmd_parser.parse(cmd_line,cmder)
+        iter     = impl.conf_iter.node_iter(data)
+        if not iter.match(cmder) :
+            impl.console.complement(cmder,iter)
+        cmder.do(iter)
+    except error.icmd_exception as e:
+        print("")
+        print(e)
