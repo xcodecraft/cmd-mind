@@ -15,5 +15,7 @@ def setup_env() :
 if __name__ == '__main__':
     setup_env()
     from testcase.conf_tc import *
+    from testcase.parse_tc import *
+    #from testcase.io_tc import *
 
     unittest.main()
