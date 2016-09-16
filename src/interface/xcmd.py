@@ -11,13 +11,18 @@ class commander :
         for c in self.cmds :
             cmd = "%s %s" %(cmd,c)
         for k,v in self.args.items():
-            cmd = "%s --%s=%s" %(cmd,k,v)
-        return cmd    
-            
+            if len(k.strip())  ==  1 :
+                cmd = "%s -%s %s" %(cmd,k,v)
+            else :
+                cmd = "%s --%s=%s" %(cmd,k,v)
+        return cmd
+
     def add_cmd(self,name) :
-        self.cmds.append(name)   
+        self.cmds.append(name)
     def add_arg(self,key,val) :
-        self.args[key]  = val    
+        self.args[key]  = val
     def reset(self):
         self.cmds = []
-        self.args = {}    
+        self.args = {}
+    def do(self,iter):
+        iter.current.do(self)

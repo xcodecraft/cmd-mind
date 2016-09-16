@@ -1,5 +1,6 @@
 #coding=utf-8
-import cmd 
+import cmd
+import os,string
 class conf_obj :
     name = ""
     def echo(self):
@@ -10,33 +11,67 @@ class conf_obj :
     def report(self,cmder) :
         pass
     def prompt(self):
-        return self.name    
+        return self.name
 
 
 class cmd(conf_obj) :
     subs = []
     args = []
+    call = None
     def is_match(self,key) :
         return key == self.name
     def report(self,cmder) :
         cmder.add_cmd(self.name)
 
+    def do(self,cmder):
+        if self.call is None :
+            execmd = str(cmder)
+            print("\n")
+            print(execmd)
 
+            # os.system(execmd)
+        else:
+            args = cmder.args
+            # map hotkey and name to same value ;
+            for a in self.args :
+                if a.hotkey is not None :
+                    if a.hotkey in args :
+                        args[a.name] = args[a.hotkey]
+
+            calltpl = string.Template(self.call)
+            execmd = calltpl.substitute(args)
+            print("\n")
+            print(execmd)
+            os.system(execmd)
 
 class arg(conf_obj) :
-    value = None
-    default  = None 
+    hotkey  = None
+    value   = None
+    default = None
     options = []
     def is_match(self,key) :
         return key == self.name
 
     def report(self,cmder) :
         cmder.add_arg(self.name,self.value)
-    def prompt(self):
-        line = "--" + self.name 
+
+    def prompt_hotkey(self):
+        line = "-%s " %(self.hotkey)
         if self.default  is not None :
-            line = "--" + self.name + "="  + self.default   
-        return line     
+            line = "-%s %s" %(self.hotkey, self.default)
+        return line
+
+    def prompt_normal(self):
+        line = "--%s=" %(self.hotkey)
+        if self.default  is not None :
+            line = "--%s=%s" %(self.hotkey, self.default)
+        return line
+
+    def prompt(self):
+        if self.hotkey is not None :
+            return self.prompt_hotkey()
+        return self.prompt_normal()
+
     def option_next(self) :
         for i in self.options :
-            yield i 
+            yield i
