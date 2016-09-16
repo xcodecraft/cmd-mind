@@ -1,8 +1,10 @@
 #!/usr/bin/python
 import sys,xenv,os.path
+import logging
 
 if __name__ == '__main__':
     xenv.set_modul_path()
+    logging.basicConfig(level=logging.DEBUG,filename='run.log')
     argv = sys.argv
 
     main_cmd = os.path.basename(argv[0])

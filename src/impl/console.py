@@ -9,6 +9,7 @@ import logging
 BS  = binascii.a2b_hex("08")
 DEL = binascii.a2b_hex("7F")
 ESC = binascii.a2b_hex("1B")
+_logger = logging.getLogger()
 
 def complement(cmder,node_iter):
     pio         = prompt_io()
@@ -64,6 +65,7 @@ class prompt_io :
         while(True):
             try :
                 self.prompt_value   = self.value_iter.next()
+                _logger.debug("prompt: %s" %self.prompt_value)
                 return True
             except :
                 self.value_iter = None
@@ -83,6 +85,7 @@ class prompt_io :
                 if word[0:input_len] ==  data[0:input_len] :
                     p_word = data[input_len :]
                     self.prompt_name = p_word
+                    _logger.debug("prompt: %s" %self.prompt_name)
                     return True
             except :
                 self.name_iter = None
