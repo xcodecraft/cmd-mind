@@ -1,7 +1,7 @@
 #coding=utf-8
 import sys,tty,termios
 import binascii
-import cmd_parser
+import cmd_parser,calls
 import pdb
 import logging
 
@@ -13,7 +13,7 @@ _logger = logging.getLogger()
 
 def complement(cmder,node_iter):
     pio         = prompt_io()
-    line        = pio.input_line( cmder,node_iter)
+    line        = pio.input( cmder,node_iter)
 
 class console_mode :
     def __enter__(self) :
@@ -29,21 +29,83 @@ def back_clear(char_len) :
         sys.stdout.write(DEL)
         sys.stdout.write(BS)
 
+class io_status:
+    tag_sep = " "
+    tag_ass = "="
+    tag_mpt = "="
+    tag_quote ='"'
+    mode_cmd        = "mode_cmd"
+    mode_arg_key    = "mode_arg_key"
+    mode_arg_val    = "mode_arg_val"
+    mode_unknow     = "mode_unknow"
+    mode_prompt     = "mode_prompt"
+    mode_assgin     = "mode_assgin"
+    mode_quote      = "mode_quote"
+    pre_mode        = None
+    cur_mode        = ""
+    def is_cmd(self)  :
+        return self.cur_mode == self.mode_cmd
+    def to_cmd(self)  :
+        self.cur_mode = self.mode_cmd
+
+    def is_unknow(self) :
+        return self.cur_mode == self.mode_unknow
+    def to_unknow(self) :
+        self.cur_mode = self.mode_unknow
+
+    def is_quote(self)  :
+        return self.cur_mode == self.mode_quote
+
+    def to_quote(self) :
+        self.pre_mode = self.cur_mode
+        self.cur_mode = self.mode_quote
+
+    def to_back(self) :
+        self.cur_mode = self.pre_mode
+        self.pre_mode = None
+
+    def is_prompt(self) :
+        return self.cur_mode == self.mode_prompt
+    def to_prompt(self) :
+        self.pre_mode = self.cur_mode
+        self.cur_mode = self.mode_prompt
+
+    def is_assgin(self) :
+        return self.cur_mode == self.mode_assgin
+    def to_assgin(self) :
+        self.pre_mode = self.cur_mode
+        self.cur_mode = self.mode_assgin
+
+    def is_arg_key(self):
+        return self.cur_mode == self.mode_arg_key
+
+    def is_arg_val(self):
+        return self.cur_mode == self.mode_arg_val
+
+    def to_arg_key(self):
+        self.cur_mode = self.mode_arg_key
+    def to_arg_val(self):
+        self.cur_mode = self.mode_arg_val
+
+
+
 class prompt_io :
-    name_iter  = None
-    value_iter = None
-    prompt_name = ""
+    name_iter    = None
+    value_iter   = None
+    prompt_block  = ""
     prompt_value = ""
-    input_line  = ""
-    input_word  = ""
+    input_line   = ""
+    input_word   = ""
+    input_status = []
 
     def get_promptor(self,cmder,node_iter) :
         prompt_iter = None
         if (not node_iter.match_cmds(cmder) ) and node_iter.have_subs() :
-            prompt_iter = node_iter.next_sub()
-
-        if (not node_iter.match_args(cmder) ) and node_iter.have_args() :
-            prompt_iter = node_iter.next_arg(cmder.args)
+            prompt_iter = node_iter.next_sub(cmder)
+            _logger.debug("cmd prompt")
+        elif (not node_iter.match_args(cmder) ) and node_iter.have_args() :
+            prompt_iter = node_iter.next_arg(cmder)
+            _logger.debug("arg prompt")
         return prompt_iter
     def find_name_prompt(self,cmder,node_iter) :
         #pdb.set_trace()
@@ -67,7 +129,7 @@ class prompt_io :
                 self.prompt_value   = self.value_iter.next()
                 _logger.debug("prompt: %s" %self.prompt_value)
                 return True
-            except :
+            except StopIteration:
                 self.value_iter = None
                 if stop_count > 10 :
                     return False
@@ -84,10 +146,10 @@ class prompt_io :
                 input_len = len(word.strip())
                 if word[0:input_len] ==  data[0:input_len] :
                     p_word = data[input_len :]
-                    self.prompt_name = p_word
-                    _logger.debug("prompt: %s" %self.prompt_name)
+                    self.prompt_block = p_word
+                    _logger.debug("prompt: %s" %self.prompt_block)
                     return True
-            except :
+            except StopIteration:
                 self.name_iter = None
                 if stop_count > 10 :
                     return False
@@ -99,70 +161,129 @@ class prompt_io :
     def clean_prompt(self):
         self.name_iter      = None
         self.value_iter     = None
-        self.prompt_name    = ""
+        self.prompt_block    = ""
         self.prompt_value   = ""
 
     def input_over(self,cmder,node_iter) :
-        self.input_line = self.input_line + self.input_word
-        self.input_word = ""
         cmder.reset()
         cmd_parser.parse(self.input_line,cmder)
         node_iter.walk(cmder.cmds)
 
-    def input_line(self,cmder,node_iter) :
-        self.input_word = ""
-        self.input_line = str(cmder)  + " "
-        sys.stdout.write(self.input_line )
-        self.input_over(cmder,node_iter)
-        self.clean_prompt()
-        prompt_name_mode   = False
-        prompt_value_mode  = False
+
+    def get_char(self) :
+        ch = ''
+        if len(self.auto_buffer) > 0 :
+            ch = self.auto_buffer[0]
+            self.auto_buffer = self.auto_buffer[1:]
+        else :
+            ch = sys.stdin.read(1)
+        return ch
+
+    def record_char(self,ch) :
+        sys.stdout.write(ch)
+        self.input_line =  self.input_line + ch
+        self.input_status.append(self.status)
+
+    def record_word(self,word) :
+        for c in word:
+            self.record_char(c)
+
+    def reback_char(self) :
+        back_clear(1)
+        self.input_line = self.input_line[0:-1]
+        self.input_status.append(self.status)
+        self.status = self.input_status.pop()
+
+    def reback_word(self,word) :
+        for c in word:
+            self.reback_char()
+
+    def input(self,cmder,node_iter) :
+        self.auto_buffer =  str(cmder)
+        self.status = io_status()
+        self.status.to_unknow()
         with  console_mode() :
             while True:
-                    ch = sys.stdin.read(1)
-                    if prompt_name_mode :
-                        if not ch  == '\t' :
-                            self.input_word +=  self.prompt_name
-                            self.clean_prompt()
-                            prompt_name_mode = False
-                    if prompt_value_mode :
-                        if not ch  == '=' :
-                            self.clean_prompt()
-                            prompt_value_mode = False
-
-                    if ch == '=' :
-                        args = cmd_parser.parse_args(self.input_word)
-                        key  = args.keys()[0]
-                        val  = args.values()[0]
-                        #pdb.set_trace()
-                        if self.find_value_prompt(key,cmder,node_iter) :
-                            if self.value_prompt(key,cmder,node_iter) :
-                                prompt_value_mode = True
-                                if val is not None :
-                                    last_clear_len    = len(val)
-                                    back_clear(last_clear_len)
-                                sys.stdout.write(self.prompt_value)
-                                self.input_word = "--%s=%s" %(key,self.prompt_value)
-                                continue
-
-                    if ch == '\t' :
-                        prompt_name_mode = True
-                        last_clear_len = len(self.prompt_name)
-                        if self.find_name_prompt(cmder,node_iter) :
-                            if self.name_prompt(self.input_word,cmder,node_iter) :
-                                back_clear(last_clear_len)
-                                sys.stdout.write(self.prompt_name)
-                        continue
-                    if ch == DEL :
-                        #pdb.set_trace()
-                        self.input_word = self.input_word[0:-1]
-                        back_clear(1)
-                        continue
-
-                    if ch == ' ' :
-                        self.input_over(cmder,node_iter)
+                    ch = self.get_char()
+                    _logger.debug("mode:%s ,char:%s" %(self.status.cur_mode,ch))
                     if ch == '\r' :
                         self.input_over(cmder,node_iter)
                         return  self.input_line
-                    sys.stdout.write(ch)
-                    self.input_word += ch
+                    if self.status.is_quote() :
+                        if not ch == '"' :
+                            self.status.to_back()
+                        self.record_char(ch)
+                        continue
+
+                    if self.status.is_prompt() :
+                        if not ch  == ' ' :
+                            self.status.to_back()
+                        if ch == '\t' :
+                            if self.find_name_prompt(cmder,node_iter) :
+                                _logger.debug("found name promptor")
+                                last_prompt   = self.prompt_block
+                                if self.name_prompt(self.input_word,cmder,node_iter) :
+                                    self.reback_word(last_prompt)
+                                    self.record_word(self.prompt_block)
+                        continue
+
+                    if self.status.is_assgin():
+                        if not ch  == ' ' :
+                            self.status.to_back()
+                        if ch == '=' :
+                            if self.find_value_prompt(arg_key,cmder,node_iter) :
+                                _logger.debug("found value promptor")
+                                last_assgin = self.prompt_value
+                                if self.value_prompt(arg_key,cmder,node_iter) :
+                                        _logger.debug("clean %s" %last_assgin)
+                                        self.reback_word(last_assgin)
+                                        self.record_word(self.prompt_value)
+                        continue
+                    if self.status.is_arg_val():
+                        if ch == '=' :
+                            if self.find_value_prompt(arg_key,cmder,node_iter) :
+                                _logger.debug("found value promptor")
+                                if self.value_prompt(arg_key,cmder,node_iter) :
+                                        self.record_word(self.prompt_value)
+                                        self.status.to_assgin()
+                        if ch == '"' :
+                            self.record_char(ch)
+                            self.status.to_quote()
+                            continue
+                        if ch == DEL :
+                            self.reback_char()
+                            continue
+                        if ch == ' ' :
+                            self.status.to_unknow()
+                        self.record_char(ch)
+
+
+
+                    if self.status.is_arg_key():
+#disable
+                        if ch == '"' :
+                            continue
+                        if ch == ' ' :
+                            self.status.to_arg_val()
+                        if ch == '=' :
+                            self.status.to_arg_val()
+                        if ch == DEL :
+                            self.reback_char()
+                            continue
+                        self.record_char(ch)
+                        continue
+
+                    if self.status.is_unknow():
+                        if ch == '\t' :
+                            if self.find_name_prompt(cmder,node_iter) :
+                                _logger.debug("found name promptor")
+                                if self.name_prompt(self.input_word,cmder,node_iter) :
+                                    self.record_word(self.prompt_block)
+                                    self.status.to_prompt()
+                            continue
+                        if ch == '-' :
+                            self.status.to_arg_key()
+                        if ch == DEL :
+                            self.reback_char()
+                            continue
+                        self.record_char(ch)

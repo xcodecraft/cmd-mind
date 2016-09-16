@@ -1,4 +1,6 @@
 #coding=utf-8
+import logging
+_logger = logging.getLogger()
 class node_iter :
     root    = None
     parent  = None
@@ -26,14 +28,14 @@ class node_iter :
 
     def have_args(self) :
         return len(self.current.args) > 0
-    def next_sub(self) :
+    def next_sub(self,cmder) :
         for i in self.current.subs :
-            yield i.prompt()
-    def next_arg(self,ignores) :
+            yield i.prompt(self,cmder)
+    def next_arg(self,cmder) :
         for i in self.current.args :
-            if i.name in ignores.keys() :
+            if i.name in cmder.args.keys() :
                 continue
-            yield i.prompt()
+            yield i.prompt(self,cmder)
     def list_args(self) :
         names = []
         for i in self.current.args :

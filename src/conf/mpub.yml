@@ -1,0 +1,23 @@
+!cmd
+    name : "mpub"
+    call : " ~/devspace/mara-pub/rocket_pub.sh --prj $prj --plan $plan --tag $tag --env $env --host $host"
+    args :
+        - !arg
+              name    : "prj"
+        - !arg
+              name    : "plan"
+              default : "$prj"
+        - !arg
+              name    : "tag"
+              default : "master"
+        - !arg
+              name    : "host"
+              default : "lab"
+              options :
+                - "lab"
+                - "demo"
+                - "online"
+        - !arg
+              name    : "env"
+              default : "$lab"
+

@@ -1,6 +1,7 @@
 #coding=utf-8
-import error
-import os,string
+import error,calls
+import os,string,logging
+_logger = logging.getLogger()
 class conf_obj :
     name = ""
     def echo(self):
@@ -10,9 +11,8 @@ class conf_obj :
 
     def report(self,cmder) :
         pass
-    def prompt(self):
+    def prompt(self,note_iter,cmder):
         return self.name
-
 
 class cmd(conf_obj) :
     subs = []
@@ -24,6 +24,16 @@ class cmd(conf_obj) :
         cmder.add_cmd(self.name)
 
     def do(self,cmder):
+        args = cmder.args
+        # map hotkey and name to same value ;
+        for a in self.args :
+            if a.hotkey is not None :
+                if a.hotkey in args :
+                    args[a.name] = args[a.hotkey]
+
+        for arg_obj in self.args:
+            arg_obj.do(self.name,args[arg_obj.name])
+
         if self.call is None :
             execmd = str(cmder)
             print("\n")
@@ -31,12 +41,6 @@ class cmd(conf_obj) :
             os.system(execmd)
         else:
             args = cmder.args
-            # map hotkey and name to same value ;
-            for a in self.args :
-                if a.hotkey is not None :
-                    if a.hotkey in args :
-                        args[a.name] = args[a.hotkey]
-
             try:
                 calltpl = string.Template(self.call)
                 execmd = calltpl.substitute(args)
@@ -51,8 +55,13 @@ class cmd(conf_obj) :
 class arg(conf_obj) :
     hotkey  = None
     value   = None
-    default = None
+    default = ""
     options = []
+    def do(self,cmd_name,value):
+        key = "%s_%s" %(cmd_name,self.name)
+        calls.write_history(key,value)
+        _logger.debug("load arg[%s] history : %s" %(key,value))
+
     def is_match(self,key) :
         return key == self.name
 
@@ -60,22 +69,30 @@ class arg(conf_obj) :
         cmder.add_arg(self.name,self.value)
 
     def prompt_hotkey(self):
-        line = "-%s " %(self.hotkey)
-        if self.default  is not None :
-            line = "-%s %s" %(self.hotkey, self.default)
+        line = "-%s %s" %(self.hotkey, self.default)
+        _logger.debug("prompt arg: %s" %line)
         return line
 
     def prompt_normal(self):
-        line = "--%s=" %(self.hotkey)
-        if self.default  is not None :
-            line = "--%s=%s" %(self.hotkey, self.default)
+        line = "--%s=%s" %(self.name, self.default)
+        _logger.debug("prompt arg: %s" %line)
         return line
 
-    def prompt(self):
+    def prompt(self,note_iter,cmder):
+        cmd_name = note_iter.current.name
+        _logger.debug("prompt arg begin: %s" %cmd_name)
+        if self.default  is not None :
+            self.default = string.Template(self.default).substitute(cmder.args)
+        if len(self.options) == 0 :
+            key     = "%s_%s" %(cmd_name,self.name)
+            _logger.debug("load arg[%s] history" %key)
+            self.options = calls.read_history(cmd_name)
         if self.hotkey is not None :
             return self.prompt_hotkey()
         return self.prompt_normal()
 
     def option_next(self) :
-        for i in self.options :
-            yield i
+        if len(self.options) > 0 :
+            for i in self.options :
+                yield i.strip()
+
