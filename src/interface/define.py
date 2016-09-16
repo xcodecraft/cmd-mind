@@ -1,7 +1,7 @@
-
+#coding=utf-8
+import cmd 
 class conf_obj :
     name = ""
-    subs = []
     def echo(self):
         print(self.name)
     def is_match(self,key) :
@@ -9,28 +9,34 @@ class conf_obj :
 
     def report(self,cmder) :
         pass
+    def prompt(self):
+        return self.name    
 
 
 class cmd(conf_obj) :
+    subs = []
+    args = []
     def is_match(self,key) :
         return key == self.name
     def report(self,cmder) :
-        cmder.cmds.append(self.name)
+        cmder.add_cmd(self.name)
 
 
 
 class arg(conf_obj) :
     value = None
-    def is_match(self,val) :
-        args       = val.split("=")
-        key        = args[0].strip()
-        if len(args) == 2 :
-            self.value = args[1].strip()
-        long_key  = "--%s" %(self.name)
-        short_key = "-%s" %(self.name)
-        if  key == long_key or key == short_key :
-            return True
-        return False
+    default  = None 
+    options = []
+    def is_match(self,key) :
+        return key == self.name
 
     def report(self,cmder) :
-        cmder.args[self.name] = self.value
+        cmder.add_arg(self.name,self.value)
+    def prompt(self):
+        line = "--" + self.name 
+        if self.default  is not None :
+            line = "--" + self.name + "="  + self.default   
+        return line     
+    def option_next(self) :
+        for i in self.options :
+            yield i 

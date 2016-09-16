@@ -5,21 +5,20 @@ class console_exception(Exception):
 class bug_exception(Exception) :
     pass
 
-class user_break(rigger_exception):
+class user_break(console_exception):
+    pass
+class badargs_exception(console_exception):
     pass
 
-class badargs_exception(rigger_exception):
-    pass
-
-class cmd_use_error(rigger_exception):
+class cmd_use_error(console_exception):
     def __init__(self,cmd,message):
         self.cmd = cmd
         rigger_exception.__init__(self,message)
 
-class depend_exception(rigger_exception) :
+class depend_exception(console_exception) :
     def __init__(self,monitor):
         self.monitor = monitor
     pass
 
-class var_undefine(rigger_exception):
+class var_undefine(console_exception):
     pass

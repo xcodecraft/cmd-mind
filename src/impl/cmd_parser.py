@@ -1,7 +1,65 @@
 #coding=utf8
 
 
-def parse(input):
+def parse_args(input)  :
+    status = parse_status() 
+    args = {}
+    key  = None 
+    val  = None
+    input += status.tag_sep 
+    status.to_unknow()
+    for c in input :
+        if status.is_quote():
+            if c == status.tag_quote :
+                status.to_back()
+                continue 
+            status.append(c)    
+        if status.is_empty() :
+            if c == status.tag_sep :
+                continue 
+        if status.is_unknow():
+            if c == status.tag_arg :
+                status.to_arg_key()
+                continue
+            if c == status.tag_sep :
+                continue
+        if status.is_arg_key() :
+            if c == status.tag_arg:
+                status.mode_arg_long = True
+                continue
+            if status.mode_arg_long :
+                end = False
+                if c == status.tag_ass :    
+                    status.to_arg_val() 
+                    end = True
+                if c == status.tag_sep or end :
+                    key = status.target
+                    args[key] = None
+                    status.target = ""
+                    status.to_arg_val() 
+                    continue
+            else :
+                if c == status.tag_sep  :
+                    key = status.target
+                    args[key] = None
+                    status.target = ""
+                    status.to_arg_val() 
+                    continue
+            status.append(c)
+        if status.is_arg_val() :
+            if c == status.tag_quote :
+                status.to_quote()
+                continue  
+            if c == status.tag_sep :
+                val       = status.target
+                args[key] = val
+                status.target = ""
+                status.to_unknow()
+                continue
+            status.append(c)               
+    return args 
+    
+def parse(input,cmder):
     status = parse_status() 
     
     cmds = [] 
@@ -69,10 +127,9 @@ def parse(input):
                 status.to_unknow()
                 continue
             status.append(c)               
-    data = {}
-    data['cmds']  = cmds 
-    data['args'] = args 
-    return data                
+    cmder.cmds = cmds 
+    cmder.args = args         
+    return 
                 
         
 class parse_status:

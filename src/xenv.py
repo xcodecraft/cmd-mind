@@ -1,7 +1,5 @@
 #coding=utf-8
 import string , logging, sys,os
-import yaml
-
 
 def set_modul_path() :
     root  = os.path.dirname(os.path.realpath(__file__))

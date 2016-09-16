@@ -3,6 +3,7 @@
 class conf_promt  :
     def __init__(self,node_iter):
        self.iter = node_iter 
-    def prompt(self,msg)
-        
-        pass
+       self.index = 0
+    def prompt(self,msg):
+        #self.iter.list_next()
+        return "abcd"
