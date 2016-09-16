@@ -25,6 +25,4 @@ class ConfTC(unittest.TestCase):
         self.assertTrue(iter.match_cmds(cmder))
         self.assertTrue(iter.match_args(cmder))
 
-        cmder.show()
-
         self.assertTrue(True)
