@@ -13,7 +13,7 @@ class node_iter :
         self.back_points.append({"parent" : self.parent, "current" : self.current})
 
     def back(self):
-        saved         = self.back_points.pop()
+        saved        = self.back_points.pop()
         self.parent  = saved['parent']
         self.current = saved['current']
 
@@ -23,11 +23,15 @@ class node_iter :
             i.echo()
             names.append(i.name)
         return names
+    def list_opions(self):
+        return self.current.options
+
     def have_subs(self) :
         return len(self.current.subs) > 0
 
     def have_args(self) :
         return len(self.current.args) > 0
+
     def next_sub(self,cmder) :
         for i in self.current.subs :
             yield i.prompt(self,cmder)

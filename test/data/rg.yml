@@ -1,0 +1,25 @@
+!cmd
+    name : "rg"
+    subs :
+        - !cmd
+            name : ""conf"
+            cmds :
+                - "conf"
+                - "start"
+                - "stop"
+                - "conf,stop"
+            args :
+                - !arg
+                    name: "e"
+                    options :
+                        - "dev"
+                        - "lab"
+                        - "demo"
+                        - "online"
+                    
+                - !arg
+                    name: "s"
+                    options :
+                        - "api"
+                        - "web"
+

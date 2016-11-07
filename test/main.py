@@ -17,6 +17,8 @@ if __name__ == '__main__':
     from testcase.conf_tc import *
     from testcase.parse_tc import *
     from testcase.calls_tc import *
-    #from testcase.io_tc import *
+    from testcase.io_tc import *
+    from testcase.mode_tc import *
+    from testcase.prompt_tc import *
 
     unittest.main()
