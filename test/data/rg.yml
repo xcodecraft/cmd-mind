@@ -2,24 +2,26 @@
     name : "rg"
     subs :
         - !cmd
-            name : ""conf"
-            cmds :
+            name : "*"
+            options :
                 - "conf"
                 - "start"
                 - "stop"
                 - "conf,stop"
             args :
                 - !arg
-                    name: "e"
-                    options :
+                    name: "env"
+                    hot: "e"
+                    values:
                         - "dev"
                         - "lab"
                         - "demo"
                         - "online"
                     
                 - !arg
-                    name: "s"
-                    options :
+                    name: "sys"
+                    hot: "s"
+                    values :
                         - "api"
                         - "web"
 

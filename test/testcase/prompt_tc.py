@@ -16,22 +16,51 @@ class PromptTC(unittest.TestCase):
         testRoot = os.path.dirname(testRoot)
         data = load_conf(testRoot + "/data/rg.yml","!","define.")
 
-        cmd_line = "rg"
+        cmd_line = "conf"
         cmder    = xcmd.commander("rg")
         impl.cmd_parser.parse(cmd_line,cmder)
         iter     = node_iter(data)
-        prompt   = block_prompt()
-        prompt.bind(cmder,iter)
+        iter.walk(cmder.cmds)
+        promptor = iter.current.get_prompter("") 
 
-        promptor = prompt.prompt("")
-        what1,what2,what3,what4,what5 = "","","","",""
-        what1    = promptor.next()
-        what2    = promptor.next()
-        #what3    = promptor.next()
-        #what4    = promptor.next()
-        #what5    = promptor.next()
-        print("\nprompt:%s,%s,%s,%s,%s" %(what1,what2,what3,what4,what5))
+        what = ""
+        what    = promptor.next()
+        self.assertEqual(what,"conf")
+        what    = promptor.next()
+        self.assertEqual(what,"start")
+        what    = promptor.next()
+        self.assertEqual(what,"stop")
 
-        #what    = prompt.prompt("c")
-        #self.assertEqual(what,"onf")
-        #print("\n data: %s \n" %(what))
+        iter.walk(cmder.cmds)
+        promptor = iter.current.get_prompter("s") 
+        what    = promptor.next()
+        self.assertEqual(what,"tart")
+        what    = promptor.next()
+        self.assertEqual(what,"top")
+
+        promptor = iter.get_prompter()
+        self.assertEqual(promptor,None)
+
+        promptor = iter.current.args_prompter()
+        what     = promptor.next()
+        self.assertEqual(what,"env")
+
+        what     = promptor.next()
+        self.assertEqual(what,"sys")
+
+        promptor = iter.current.args_prompter(hot=True)
+        what     = promptor.next()
+        self.assertEqual(what,"e")
+
+        what     = promptor.next()
+        self.assertEqual(what,"s")
+
+
+        # try :
+        #     what    = promptor.next()
+        #     self.assertTrue(False)
+        # except StopIteration  as e :
+        #     self.assertTrue(True)
+        #
+        # promptor = iter.current.args_prompter("s") 
+

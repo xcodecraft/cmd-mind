@@ -9,7 +9,7 @@
                 - !arg
                     name: "env"
                     default : "demo"
-                    options :
+                    values :
                         - "dev"
                         - "lab"
                         - "demo"

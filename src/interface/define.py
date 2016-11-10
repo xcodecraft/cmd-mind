@@ -1,6 +1,7 @@
 #coding=utf-8
 import error,calls
 import os,string,logging
+import utls.prompt 
 _logger = logging.getLogger()
 class conf_obj :
     name = ""
@@ -17,11 +18,55 @@ class conf_obj :
 class cmd(conf_obj) :
     subs = []
     args = []
+    options = []
     call = None
     def is_match(self,key) :
-        return key == self.name
+        _logger.debug("[is_match] key:%s name:%s" %(key,self.name))
+        if key == self.name : 
+            return True 
+        else :
+            for x in self.options :
+                if key == x :
+                    return True 
+        return False 
     def report(self,cmder) :
         cmder.add_cmd(self.name)
+
+    def have_subs(self) :
+        return len(self.subs) > 0
+
+    def next_sub(self,cmder) :
+        for i in self.subs :
+            yield  i 
+
+    def have_args(self) :
+        return len(self.args) > 0
+
+    def next_arg(self,cmder) :
+        for i in self.args :
+            yield i
+
+    def use_arg(self,key,val):
+        for i in self.current.args:
+            if i.is_match(key) :
+                #self.cmder.add_arg(key,val)
+                return True
+        return False
+
+    def get_prompter(self,key="") :
+        _logger.debug("[prompt] cmd : %s" %(self.name))
+        if len(self.options) > 0 :
+            return utls.prompt.iter(self.options,key, lambda x: x ) 
+        return None 
+
+    def args_prompter(self,key="",hot = False) :
+        _logger.debug("[prompt] args : %s" %(self.name))
+        if len(self.args) > 0 :
+            if hot :
+                return utls.prompt.iter(self.args,key, lambda x: x.hot ) 
+            else:
+                return utls.prompt.iter(self.args,key, lambda x: x.name ) 
+        return None 
 
     def do(self,cmder):
         args = cmder.args
@@ -56,7 +101,7 @@ class arg(conf_obj) :
     hotkey  = None
     value   = None
     default = ""
-    options = []
+    values = []
     def do(self,cmd_name,value):
         key = "%s_%s" %(cmd_name,self.name)
         calls.write_history(key,value)
@@ -78,21 +123,9 @@ class arg(conf_obj) :
         _logger.debug("prompt arg: %s" %line)
         return line
 
-    def prompt(self,note_iter,cmder):
-        cmd_name = note_iter.current.name
-        _logger.debug("prompt arg begin: %s" %cmd_name)
-        if self.default  is not None :
-            self.default = string.Template(self.default).substitute(cmder.args)
-        if len(self.options) == 0 :
-            key     = "%s_%s" %(cmd_name,self.name)
-            _logger.debug("load arg[%s] history" %key)
-            self.options = calls.read_history(cmd_name)
-        if self.hotkey is not None :
-            return self.prompt_hotkey()
-        return self.prompt_normal()
-
-    def option_next(self) :
-        if len(self.options) > 0 :
-            for i in self.options :
-                yield i.strip()
+    def value_prompter(self,word):
+        _logger.debug("[prompt] arg : %s" %(self.name))
+        if len(self.values) > 0 :
+            return utls.prompt.iter(self.values,key, lambda x: x ) 
+        return None 
 
