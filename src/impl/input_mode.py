@@ -62,11 +62,13 @@ class argval_mode :
         pass 
 
 class prompt_mode:
-    prompter = None 
-    def __init__(self,hismode):
-        self.hismode        = hismode
-        self.last_prompt    = "" 
-        self.prompt_block   = ""
+    prompter  = None 
+    def __init__(self,hismode,word=""):
+        self.hismode      = hismode
+        self.last_prompt  = ""
+        self.prompt_block = ""
+        self.word         = word
+        self.options      = None
 
     def mode(self,ch) :
         if ch  == ' ' :
@@ -75,18 +77,25 @@ class prompt_mode:
     def input(self,ch,receiver) :
         if ch == '\t' :
             if self.prompter is not None :
-                _logger.debug("found name promptor")
+                if self.options is None :
+                    self.options = self.prompter(self.word)
                 last_prompt   = self.prompt_block
-                if self.prompter.name_prompt(self.input_word) :
+                try :
+                    self.prompt_block= self.options.next()
                     receiver.reback_word(last_prompt)
                     receiver.record_word(self.prompt_block)
-
-        pass
+                    _logger.info(" prompt :%s" %(self.prompt_block))
+                except StopIteration :
+                    self.options = None 
+                    pass
 
 class cmd_mode:
+    cmd_prompter = None 
     def mode(self,ch) :
         if ch == '\t' :
-            return  prompt_mode()
+            mode =  prompt_mode(self)
+            mode.prompter = self.cmd_prompter 
+            return  mode 
         if ch == '"' :
             return quote_mode(hismode=self) 
         if ch == '-' :
