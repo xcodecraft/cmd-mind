@@ -6,6 +6,15 @@ import pdb
 import logging
 from io_status import *
 from input_mode import *
+from impl.input_mode import *
+from impl.receiver   import *
+from impl.conf_yaml  import *
+from impl.prompt     import *
+# import utls.prompt 
+import impl.input_mode  
+# import impl.conf_iter 
+
+
 
 BS  = binascii.a2b_hex("08")
 DEL = binascii.a2b_hex("7F")
@@ -21,52 +30,34 @@ class console_mode :
         self.fd = sys.stdin.fileno()
         self.settings = termios.tcgetattr(self.fd)
         tty.setraw(sys.stdin.fileno())
+        #tty.setcbreak(sys.stdin.fileno())
     def __exit__(self,exc_type,exc_value,traceback) :
         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.settings)
 
 
 class cmd_io :
-    name_iter    = None
-    value_iter   = None
-    prompt_block  = ""
-    prompt_value = ""
-    input_line   = ""
-    input_word   = ""
-    input_status = []
-
-    def __init__(self):
-        pass
-
-    def input_over(self,cmder,node_iter) :
-        cmder.reset()
-        cmd_parser.parse(self.input_line,cmder)
-        node_iter.walk(cmder.cmds)
-
-
     def get_char(self) :
-        ch = ''
-        if len(self.auto_buffer) > 0 :
-            ch = self.auto_buffer[0]
-            self.auto_buffer = self.auto_buffer[1:]
-        else :
-            ch = sys.stdin.read(1)
+        ch = sys.stdin.read(1)
+        _logger.debug(",char:[%s : %s]" %(ch,binascii.b2a_hex(ch)))
         return ch
 
-
     def input(self,cmder,node_iter) :
-        self.auto_buffer =  str(cmder)
-        self.status      = io_status()
-        self.status.to_unknow()
-        input_mode      = cmd_mode()
-        receiver = input_receiver() 
+        cur_mode = cmd_mode()
+        recorder = input_receiver()
+        receiver = combin_receiver(recorder,console_receiver())
+        impl.input_mode._prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).get(x,y)
+
         with  console_mode() :
             while True:
                     ch = self.get_char()
-                    _logger.debug(",char:%s" %(ch))
                     if ch == '\r' :
-                        self.input_over(cmder,node_iter)
+                        cmder.reset()
+                        cmd_parser.parse(recorder.data,cmder)
+                        break
                     if ch == DEL :
                         receiver.reback_char()
-                    input_mode = input_mode(ch)
-                    input_mode.input(ch,cmder,node_iter)
-                    return  self.receiver.data
+
+                    cur_mode = cur_mode.mode(ch)
+                    if cur_mode is not end_mode :
+                        cur_mode.input(ch,receiver)
+        return  

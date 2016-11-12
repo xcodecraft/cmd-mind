@@ -1,16 +1,22 @@
 #!/usr/bin/python
 import sys,xenv,os.path
 import logging
+import pdb
+
+def exec_mode(cur_mode,line,receiver) :
+    for c in line :
+        cur_mode = cur_mode.mode(c)
+        if cur_mode is not end_mode :
+            cur_mode.input(c,receiver)
 
 if __name__ == '__main__':
     xenv.set_modul_path()
     logging.basicConfig(level=logging.DEBUG,filename='run.log')
     argv = sys.argv
 
-    main_cmd = os.path.basename(argv[0])
-    conf  = os.environ['ICMD_CONF']
-    mcmd  = os.environ['ICMD_MAIN']
-    cmd_line = mcmd
+    conf = os.environ['ICMD_CONF']
+    mcmd = os.environ['ICMD_MAIN']
+    cmd_line = ""
     for word in argv[1:] :
        cmd_line = cmd_line + " " + word
 
@@ -19,12 +25,13 @@ if __name__ == '__main__':
 
     try:
         data     = impl.conf_yaml.load_conf(conf,"!","define.")
-        cmder    = xcmd.commander(main_cmd)
-        impl.cmd_parser.parse(cmd_line,cmder)
+        cmder    = xcmd.commander(mcmd,cmd_line)
         iter     = impl.conf_iter.node_iter(data)
         if not iter.match(cmder) :
             impl.console.complement(cmder,iter)
-        cmder.do(iter)
+        if iter.match(cmder) :
+            cmder.do(iter)
+        else:
+            print("\nerror cmd!")
     except error.icmd_exception as e:
-        print("")
         print(e)

@@ -6,19 +6,19 @@ import pdb
 import logging
 
 class io_status:
-    tag_sep = " "
-    tag_ass = "="
-    tag_mpt = "="
-    tag_quote ='"'
-    mode_cmd        = "mode_cmd"
-    mode_arg_key    = "mode_arg_key"
-    mode_arg_val    = "mode_arg_val"
-    mode_unknow     = "mode_unknow"
-    mode_prompt     = "mode_prompt"
-    mode_assgin     = "mode_assgin"
-    mode_quote      = "mode_quote"
-    pre_mode        = None
-    cur_mode        = ""
+    tag_sep      = " "
+    tag_ass      = "="
+    tag_mpt      = "="
+    tag_quote    = '"'
+    mode_cmd     = "mode_cmd"
+    mode_arg_key = "mode_arg_key"
+    mode_arg_val = "mode_arg_val"
+    mode_unknow  = "mode_unknow"
+    mode_prompt  = "mode_prompt"
+    mode_assgin  = "mode_assgin"
+    mode_quote   = "mode_quote"
+    pre_mode     = None
+    cur_mode     = ""
     def is_cmd(self)  :
         return self.cur_mode == self.mode_cmd
     def to_cmd(self)  :

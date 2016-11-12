@@ -20,14 +20,17 @@ class cmd(conf_obj) :
     args = []
     options = []
     call = None
-    def is_match(self,key) :
+    def is_match(self,key,strict=False) :
         _logger.debug("[is_match] key:%s name:%s" %(key,self.name))
-        if key == self.name : 
+        if key == self.name  :
             return True 
-        else :
+        if strict :
             for x in self.options :
                 if key == x :
                     return True 
+        else:
+            if  self.name == "*" : 
+               return True 
         return False 
     def report(self,cmder) :
         cmder.add_cmd(self.name)
@@ -41,6 +44,16 @@ class cmd(conf_obj) :
 
     def have_args(self) :
         return len(self.args) > 0
+
+    def get_arg(self,key) :
+        for i in self.args :
+            if i.name == key  or  i.hot == key :
+                return i 
+            # if hot and i.hot == key :
+            #         return i
+            # if not hot and i.name == key :
+            #         return i
+        return None 
 
     def next_arg(self,cmder) :
         for i in self.args :
@@ -69,33 +82,32 @@ class cmd(conf_obj) :
         return None 
 
     def do(self,cmder):
-        args = cmder.args
+        # args = cmder.args
         # map hotkey and name to same value ;
-        for a in self.args :
-            if a.hotkey is not None :
-                if a.hotkey in args :
-                    args[a.name] = args[a.hotkey]
-
-        for arg_obj in self.args:
-            arg_obj.do(self.name,args[arg_obj.name])
+        # for a in self.args :
+        #     if a.hotkey is not None :
+        #         if a.hotkey in args :
+        #             args[a.name] = args[a.hotkey]
+        #
+        # for arg_obj in self.args:
+        #     arg_obj.do(self.name,args[arg_obj.name])
 
         if self.call is None :
             execmd = str(cmder)
-            print("\n")
-            print(execmd)
-            os.system(execmd)
-        else:
-            args = cmder.args
-            try:
-                calltpl = string.Template(self.call)
-                execmd = calltpl.substitute(args)
-                print("\n")
-                print(execmd)
-                os.system(execmd)
-            except KeyError as e :
-                key = str(e)
-                msg = "[ %s ] less %s" %(self.call,key)
-                raise error.icmd_exception(msg)
+            print("\n%s" %(execmd))
+            #os.system(execmd)
+        # else:
+        #     args = cmder.args
+        #     try:
+        #         calltpl = string.Template(self.call)
+        #         execmd = calltpl.substitute(args)
+        #         print("\n")
+        #         print(execmd)
+        #         os.system(execmd)
+        #     except KeyError as e :
+        #         key = str(e)
+        #         msg = "[ %s ] less %s" %(self.call,key)
+        #         raise error.icmd_exception(msg)
 
 class arg(conf_obj) :
     hotkey  = None
@@ -123,9 +135,9 @@ class arg(conf_obj) :
         _logger.debug("prompt arg: %s" %line)
         return line
 
-    def value_prompter(self,word):
+    def value_prompter(self,word=""):
         _logger.debug("[prompt] arg : %s" %(self.name))
         if len(self.values) > 0 :
-            return utls.prompt.iter(self.values,key, lambda x: x ) 
+            return utls.prompt.iter(self.values,word, lambda x: x ) 
         return None 
 

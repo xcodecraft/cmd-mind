@@ -31,15 +31,28 @@ class node_iter :
             if not self.next(cmd) :
                 return 
 
-    def next(self,key):
+    def next(self,key,strict=False):
         for i in self.current.subs :
-            if i.is_match(key) :
+            if i.is_match(key,strict) :
                 self.save()
                 self.parent  = self.current
                 self.current = i
+                _logger.debug("match %s ,next to :%s" %(key,self.current.name)) 
                 return True
         return False
 
+    def match(self,cmder) :
+        self.to_root()
+        for cmd in cmder.cmds :
+            if not self.next(cmd,strict=True) :
+                return False 
+        _logger.debug("match cmd :%s" %(self.current.name)) 
+        if len (self.current.subs) > 0 :
+            return False 
+        for arg in cmder.args :
+            if self.current.get_arg(arg) == None :
+                return False 
+        return True
     def get_prompter(self,word=""):
         _logger.debug("[cmd prompt] current: %s, word:%s" %(self.current.name , word))
         if len(self.current.subs) > 0 :

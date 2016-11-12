@@ -1,0 +1,27 @@
+ !cmd
+    name : "rg"
+    subs :
+        - !cmd
+            name : "*"
+            options :
+                - "conf"
+                - "start"
+                - "stop"
+                - "conf,stop"
+            args :
+                - !arg
+                    name: "env"
+                    hot: "e"
+                    values:
+                        - "dev"
+                        - "lab"
+                        - "demo"
+                        - "online"
+                    
+                - !arg
+                    name: "sys"
+                    hot: "s"
+                    values :
+                        - "api"
+                        - "web"
+
