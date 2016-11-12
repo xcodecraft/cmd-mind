@@ -95,7 +95,7 @@ class cmd(conf_obj) :
         if self.call is None :
             execmd = str(cmder)
             print("\n%s" %(execmd))
-            #os.system(execmd)
+            os.system(execmd)
         # else:
         #     args = cmder.args
         #     try:
