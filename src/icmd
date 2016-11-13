@@ -34,4 +34,5 @@ if __name__ == '__main__':
         else:
             print("\nerror cmd!")
     except error.icmd_exception as e:
+        print("")
         print(e)

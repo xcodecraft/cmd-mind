@@ -11,16 +11,16 @@
             args :
                 - !arg
                     name: "env"
-                    hot: "e"
+                    hotkey: "e"
                     values:
                         - "dev"
                         - "lab"
                         - "demo"
                         - "online"
-                    
+
                 - !arg
                     name: "sys"
-                    hot: "s"
+                    hotkey: "s"
                     values :
                         - "api"
                         - "web"

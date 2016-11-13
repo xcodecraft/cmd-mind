@@ -1,0 +1,17 @@
+!cmd
+    name : "xver"
+    call : "/data/x/tools/mara-pub/rocket_ver.sh"
+    args :
+        - !arg
+              name : "host"
+              call: "--host $host"
+              hotkey  : "h"
+              must : True
+              values :
+                - "dev"
+                - "lab"
+                - "demo"
+                - "beta"
+                - "ol-zone-c"
+                - "ol-zone-b"
+                - "ol-task"

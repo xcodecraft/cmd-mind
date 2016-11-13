@@ -1,7 +1,7 @@
 #coding=utf-8
 import  re , os , string ,  getopt ,sys , unittest,logging
 from impl.prompt import *
-from impl.conf_iter import * 
+from impl.conf_iter import *
 from impl.conf_yaml import *
 from impl.receiver import *
 import impl.cmd_parser , xcmd
@@ -22,7 +22,7 @@ class PromptTC(unittest.TestCase):
         impl.cmd_parser.parse(cmd_line,cmder)
         iter     = node_iter(data)
         iter.walk(cmder.cmds)
-        options = iter.current.get_prompter("") 
+        options = iter.current.get_prompter("")
 
         what = ""
         what    = options.next()
@@ -33,7 +33,7 @@ class PromptTC(unittest.TestCase):
         self.assertEqual(what,"stop")
 
         iter.walk(cmder.cmds)
-        options = iter.current.get_prompter("s") 
+        options = iter.current.get_prompter("s")
         what    = options.next()
         self.assertEqual(what,"tart")
         what    = options.next()
@@ -72,7 +72,7 @@ class PromptTC(unittest.TestCase):
         # except StopIteration  as e :
         #     self.assertTrue(True)
         #
-        # options = iter.current.args_prompter("s") 
+        # options = iter.current.args_prompter("s")
 
     def test_finder(self) :
         testRoot      = os.path.dirname(os.path.realpath(__file__))
@@ -83,7 +83,7 @@ class PromptTC(unittest.TestCase):
         finder        = prompt_finder(receiver, iter )
 
         receiver.data = "c"
-        prompter      = finder.get("cmd_mode")
+        prompter      = finder.cmd_get()
         options       = prompter("c")
         what          = options.next()
         self.assertEqual(what,"onf")
@@ -92,7 +92,7 @@ class PromptTC(unittest.TestCase):
         self.assertEqual(what,"onf,stop")
 
         receiver.data = "conf --"
-        prompter      = finder.get("argkey_mode")
+        prompter      = finder.key_get()
         options       = prompter("")
         what          = options.next()
         self.assertEqual(what,"env")
@@ -101,14 +101,14 @@ class PromptTC(unittest.TestCase):
 
 
         receiver.data = "conf --"
-        prompter      = finder.get("argkey_mode")
+        prompter      = finder.key_get()
         options       = prompter("s")
         what          = options.next()
         self.assertEqual(what,"ys")
 
 
         receiver.data = "conf --env="
-        prompter      = finder.get("argval_mode","env")
+        prompter      = finder.val_get("env")
         options       = prompter("")
         what          = options.next()
         self.assertEqual(what,"dev")

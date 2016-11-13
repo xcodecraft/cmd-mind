@@ -1,6 +1,6 @@
 #coding=utf-8
 import logging
-import utls.prompt 
+import utls.prompt
 _logger = logging.getLogger()
 
 class node_iter :
@@ -10,7 +10,7 @@ class node_iter :
 
     back_points = []
     def __init__(self,data) :
-        self.data = data 
+        self.data = data
         self.to_root()
     def to_root(self) :
         self.root    = self.data
@@ -29,7 +29,7 @@ class node_iter :
         for cmd in cmds :
             _logger.debug("next to %s" %(cmd))
             if not self.next(cmd) :
-                return 
+                return
 
     def next(self,key,strict=False):
         for i in self.current.subs :
@@ -37,25 +37,30 @@ class node_iter :
                 self.save()
                 self.parent  = self.current
                 self.current = i
-                _logger.debug("match %s ,next to :%s" %(key,self.current.name)) 
+                _logger.debug("match %s ,next to :%s" %(key,self.current.name))
                 return True
         return False
 
     def match(self,cmder) :
+        _logger.debug("match cmd :%s" %(self.current.name))
+        _logger.debug("cmdline :%s" %(cmder))
         self.to_root()
+        # import pdb
+        # pdb.set_trace()
         for cmd in cmder.cmds :
             if not self.next(cmd,strict=True) :
-                return False 
-        _logger.debug("match cmd :%s" %(self.current.name)) 
+                return False
         if len (self.current.subs) > 0 :
-            return False 
-        for arg in cmder.args :
-            if self.current.get_arg(arg) == None :
-                return False 
+            return False
+        for arg in self.current.args :
+            if arg.must :
+                if not ( cmder.args.has_key(arg.name) or  ( arg.hotkey != None and  cmder.args.has_key(arg.hotkey) )) :
+                    return False
         return True
     def get_prompter(self,word=""):
         _logger.debug("[cmd prompt] current: %s, word:%s" %(self.current.name , word))
         if len(self.current.subs) > 0 :
-            return utls.prompt.iter(self.current.subs,word, lambda x: x.name ) 
+            return utls.prompt.iter(self.current.subs,word, lambda x: x.name )
+        _logger.info("no next cmd prompt ")
         return None
 

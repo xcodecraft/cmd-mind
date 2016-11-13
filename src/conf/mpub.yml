@@ -4,19 +4,29 @@
     args :
         - !arg
               name    : "prj"
+              must    : True
+              values  : !pipe
+                  cmd : "/bin/ls"
+                  args: "/data/x/tools/mara-pub/projects"
+
         - !arg
               name    : "plan"
-              default : "$prj"
+              values  : !pipe
+                  cmd : "/bin/ls"
+                  args: "/data/x/tools/mara-pub/projects"
         - !arg
               name    : "tag"
-              default : "master"
         - !arg
               name    : "host"
-              default : "lab"
-              options :
+              values:
                 - "lab"
                 - "demo"
                 - "online"
         - !arg
               name    : "env"
-              default : "$lab"
+              values:
+                - "lab"
+                - "demo"
+                - "test"
+                - "beta"
+                - "online"

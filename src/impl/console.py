@@ -10,9 +10,9 @@ from impl.input_mode import *
 from impl.receiver   import *
 from impl.conf_yaml  import *
 from impl.prompt     import *
-# import utls.prompt 
-import impl.input_mode  
-# import impl.conf_iter 
+# import utls.prompt
+import impl.input_mode
+# import impl.conf_iter
 
 
 
@@ -45,7 +45,10 @@ class cmd_io :
         cur_mode = cmd_mode()
         recorder = input_receiver()
         receiver = combin_receiver(recorder,console_receiver())
-        impl.input_mode._prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).get(x,y)
+        cmd_prompt_mode.prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).cmd_get(y)
+        key_prompt_mode.prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).key_get(y)
+        val_prompt_mode.prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).val_get(y)
+
 
         with  console_mode() :
             while True:
@@ -53,6 +56,7 @@ class cmd_io :
                     if ch == '\r' :
                         cmder.reset()
                         cmd_parser.parse(recorder.data,cmder)
+                        _logger.info("receive cmd: %s" %(recorder.data))
                         break
                     if ch == DEL :
                         receiver.reback_char()
@@ -60,4 +64,4 @@ class cmd_io :
                     cur_mode = cur_mode.mode(ch)
                     if cur_mode is not end_mode :
                         cur_mode.input(ch,receiver)
-        return  
+        return

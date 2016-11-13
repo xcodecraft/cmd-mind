@@ -17,11 +17,25 @@
                         - "lab"
                         - "demo"
                         - "online"
-                    
+
                 - !arg
                     name: "sys"
                     hot: "s"
                     values :
                         - "api"
                         - "web"
+
+        - !cmd
+            name : "info"
+        - !cmd
+            name : "init"
+            args :
+                - !arg
+                    name: "tpl"
+                    hot: "t"
+                    values:
+                        - "dev"
+                        - "lab"
+                        - "demo"
+                        - "online"
 

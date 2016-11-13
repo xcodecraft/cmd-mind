@@ -20,5 +20,6 @@ if __name__ == '__main__':
     from testcase.io_tc import *
     from testcase.mode_tc import *
     from testcase.prompt_tc import *
+    from testcase.extend_tc import *
 
     unittest.main()
