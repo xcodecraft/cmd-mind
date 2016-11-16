@@ -2,7 +2,8 @@
 import error,calls
 import os,string,logging
 import utls.prompt
-from subprocess import *
+from   subprocess import *
+from   utls.var_proc import *
 _logger = logging.getLogger()
 class conf_obj :
     name = ""
@@ -15,6 +16,8 @@ class conf_obj :
         pass
     def prompt(self,note_iter,cmder):
         return self.name
+    def conf(self):
+        pass
 
 class cmd(conf_obj) :
     subs    = []
@@ -22,6 +25,12 @@ class cmd(conf_obj) :
     options = None
     call    = None
     name    = ""
+
+    def conf(self):
+        os.environ['_CMD_NAME'] = self.name
+        for sub in self.subs :
+            sub.conf()
+
     def check(self) :
         if not type(self.subs) == type([]) :
             raise error.icmd_exception("%s.subs is not  []  " %(self.name))
@@ -108,8 +117,14 @@ class cmd(conf_obj) :
     def do(self,cmder):
 
         execmd =  self.getcmd()
-        for key,val in cmder.args.items() :
-            arg = self.get_arg(key)
+        for arg in self.args:
+            if arg.must == False :
+                continue
+            val = None
+            if cmder.args.has_key(arg.name) :
+                val = cmder.args[arg.name]
+            if cmder.args.has_key(arg.hotkey) :
+                val = cmder.args[arg.hotkey]
             execmd  = "%s %s" %(execmd, arg.getcmd(val))
         _logger.info("cmd: %s" %(execmd))
         print("\n%s" %execmd)
@@ -119,17 +134,20 @@ class arg(conf_obj) :
     hotkey  = None
     value   = None
     must    = False
-    default = ""
-    values = None
-    call   = None
-    def do(self,cmd_name,value):
-        key = "%s_%s" %(cmd_name,self.name)
-        calls.write_history(key,value)
-        _logger.debug("load arg[%s] history : %s" %(key,value))
+    default = None
+    values  = None
+    call    = None
 
     def is_match(self,key) :
         return key == self.name
     def getcmd(self,val) :
+        if val == None:
+            if isinstance(self.default, pipe) :
+                vals = self.default.get()
+                if len(vals) > 0 :
+                    val = vals[0].strip()
+        if val == None :
+            raise error.icmd_exception("arg %s not set value" %(self.name))
         if self.call is None :
             return "--%s %s" %(self.name,val)
         else:
@@ -158,14 +176,20 @@ class arg(conf_obj) :
         values = self.get_values()
         if len(values) > 0 :
             return utls.prompt.iter(values,word, lambda x: x )
-        _logger.warnning("[prompt] not values ")
+        _logger.warn("[prompt] not values ")
         return None
 
 class pipe(conf_obj) :
     cmd = None
     args = ""
     def get(self) :
+        self.cmd  = value_of(self.cmd)
+        self.args = value_of(self.args)
+
         if not os.path.exists(self.cmd) :
             raise error.icmd_exception("cmd is not exists : %s" %(self.cmd))
-        p = Popen([self.cmd,self.args ], bufsize=1024, stdout=PIPE, close_fds=True)
+        args = self.args.split(' ')
+        args = [self.cmd] + args
+        _logger.info("cmd: %r"  %(args) )
+        p = Popen(args , bufsize=1024, stdout=PIPE, close_fds=True)
         return p.stdout.readlines()

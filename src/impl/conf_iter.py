@@ -39,6 +39,7 @@ class node_iter :
                 self.save()
                 self.parent  = self.current
                 self.current = i
+                self.current.conf()
                 _logger.debug("match %s ,next to :%s" %(key,self.current.name))
                 return True
         return False
@@ -54,6 +55,8 @@ class node_iter :
             return False
         for arg in self.current.args :
             if arg.must :
+                if arg.default != None :
+                    continue
                 if not ( cmder.args.has_key(arg.name) or  ( arg.hotkey != None and  cmder.args.has_key(arg.hotkey) )) :
                     return False
         return True

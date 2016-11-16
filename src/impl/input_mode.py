@@ -168,6 +168,7 @@ class cmd_prompt_mode(prompt_mode) :
         self.prompter     = self.prompt_finder("")
 
 class cmd_mode (input_mode):
+
     def mode(self,ch) :
         if ch == '\t' :
             return   cmd_prompt_mode(self,self.receiver.data)

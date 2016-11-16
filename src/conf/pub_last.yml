@@ -1,0 +1,78 @@
+args1 : &commonargs
+    - !arg &tag_arg 
+          name    : "tag"
+          hotkey  : "t"
+          must:  True
+          call : "--tag $tag"
+          default: !pipe
+              cmd : "./ext/last_tag"
+              args: "${_CMD_NAME} 1"
+          values: !pipe
+              cmd : "./ext/last_tag"
+              args: "${_CMD_NAME} 5"
+    - !arg &host_arg
+          name   : "host"
+          hotkey : "h"
+          must   : True
+          call   : "--host $host"
+          values : !pipe
+              cmd : "./ext/read_ini"
+              args: "-i /data/x/tools/mara-pub/projects/${_CMD_NAME}/hosts"
+
+args2 : &prjargs
+    - *tag_arg 
+    - *host_arg 
+    - !arg 
+          name    : "env"
+          hotkey  : "e"
+          must   : True
+          call : "--env $env"
+          values:
+            - "dev"
+            - "lab"
+            - "demo"
+            - "test"
+            - "beta"
+            - "online"
+            - "online-b"
+
+
+
+main : !cmd
+    name : "publast"
+    subs :
+        - !cmd
+            name : "cmd-mind"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj cmd-mind"
+            args : *commonargs
+        - !cmd
+            name : "pylon-ng"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng"
+            args : *commonargs
+        - !cmd
+            name : "alisdk"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj aliyun_sdks"
+            args : *commonargs
+        - !cmd
+            name : "api-hub"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj api-hub"
+            args : *commonargs
+        - !cmd
+            name : "mara_sdk"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_sdk"
+            args : *commonargs
+        - !cmd
+            name : "user-gateway"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
+            args : *commonargs
+
+        - !cmd
+            name : "uac"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj louis-web"
+            args : *prjargs
+
+        - !cmd
+            name : "louis-web"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj louis-web"
+            args : *prjargs
+

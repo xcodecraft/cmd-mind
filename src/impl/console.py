@@ -36,32 +36,54 @@ class console_mode :
 
 
 class cmd_io :
+    input_buf = [] 
     def get_char(self) :
-        ch = sys.stdin.read(1)
+        if len(self.input_buf ) <= 0 :
+            ch = sys.stdin.read(1)
+        else :
+            ch = self.input_buf[0] 
+            self.input_buf = self.input_buf[1:] 
+
+
+
         _logger.debug(",char:[%s : %s]" %(ch,binascii.b2a_hex(ch)))
         return ch
+    def input_begin(self):
+        self.cur_mode  = cmd_mode()
+        self.recorder  = input_receiver()
+        self.receiver = combin_receiver(self.recorder,console_receiver())
+        pass
+
 
     def input(self,cmder,node_iter) :
-        cur_mode = cmd_mode()
-        recorder = input_receiver()
-        receiver = combin_receiver(recorder,console_receiver())
-        cmd_prompt_mode.prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).cmd_get(y)
-        key_prompt_mode.prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).key_get(y)
-        val_prompt_mode.prompt_finder = lambda x,y : prompt_finder(recorder, node_iter).val_get(y)
+        self.input_begin() 
+        cmd_prompt_mode.prompt_finder = lambda x,y : prompt_finder(self.recorder, node_iter).cmd_get(y)
+        key_prompt_mode.prompt_finder = lambda x,y : prompt_finder(self.recorder, node_iter).key_get(y)
+        val_prompt_mode.prompt_finder = lambda x,y : prompt_finder(self.recorder, node_iter).val_get(y)
 
 
+        backing = False 
         with  console_mode() :
             while True:
                     ch = self.get_char()
                     if ch == '\r' :
                         cmder.reset()
-                        cmd_parser.parse(recorder.data,cmder)
-                        _logger.info("receive cmd: %s" %(recorder.data))
+                        cmd_parser.parse(self.recorder.data,cmder)
+                        _logger.info("receive cmd: %s" %(self.recorder.data))
                         break
                     if ch == DEL :
-                        receiver.reback_char()
-
-                    cur_mode = cur_mode.mode(ch)
-                    if cur_mode is not end_mode :
-                        cur_mode.input(ch,receiver)
+                        self.receiver.reback_char()
+                        backing = True
+                        continue 
+                    else :
+                        if backing  : 
+                            backing        = False
+                            self.input_buf = self.recorder.data 
+                            self.receiver.reback_word(self.recorder.data)
+                            self.input_begin()
+                            self.input_buf  += ch
+                            continue 
+                    self.cur_mode = self.cur_mode.mode(ch)
+                    if self.cur_mode is not end_mode :
+                        self.cur_mode.input(ch,self.receiver)
         return

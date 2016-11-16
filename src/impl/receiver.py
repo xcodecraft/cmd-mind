@@ -8,17 +8,14 @@ import logging
 BS  = binascii.a2b_hex("08")
 DEL = binascii.a2b_hex("7F")
 ESC = binascii.a2b_hex("1B")
-LEFT1 = binascii.a2b_hex("5B")
-LEFT2 = binascii.a2b_hex("44")
 _logger = logging.getLogger()
 
 def back_clear(char_len) :
     _logger.debug("del %s" %(char_len))
     for i in range(char_len) :
         sys.stdout.write(BS)
-        #sys.stdout.write(LEFT2)
-        #sys.stdout.write(LEFT1)
-        #sys.stdout.write(BS)
+        sys.stdout.write(binascii.a2b_hex("20"))
+        sys.stdout.write(BS)
 
 
 class combin_receiver:

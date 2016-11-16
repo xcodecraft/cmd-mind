@@ -27,4 +27,4 @@ class loader:
         if ori is not None:
             doc = doc.replace(ori,"!!python/object:" + new)
         data = yaml.load(doc)
-        return data
+        return data['main']
