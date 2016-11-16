@@ -1,0 +1,58 @@
+ !cmd
+    name : "xsh"
+    subs :
+        - !cmd
+            name : "lab"
+            call : "ssh $host"
+            args :
+                - !arg
+                      name : "host"
+                      hotkey  : "h"
+                      must : True
+                      values :
+                        - "lab.dev.aly.mararun.cn"
+
+        - !cmd
+            name : "demo"
+            call : "ssh $host"
+            args :
+                - !arg
+                      name : "host"
+                      hotkey  : "h"
+                      must : True
+                      values :
+                        - "demo1.dev.aly.mararun.cn"
+                        - "demo2.dev.aly.mararun.cn"
+
+        - !cmd
+            name : "test"
+            call : "ssh $host"
+            args :
+                - !arg
+                      name : "host"
+                      hotkey  : "h"
+                      must : True
+                      values :
+                        - "test1.dev.aly.mararun.cn"
+
+        - !cmd
+            name : "beat"
+            call : "ssh $host"
+            args :
+                - !arg
+                      name : "host"
+                      hotkey  : "h"
+                      must : True
+                      values :
+                        - "beta1.ol.aly.mararun.cn"
+
+        - !cmd
+            name : "online"
+            call : "ssh $host"
+            args :
+                - !arg
+                      name : "host"
+                      hotkey  : "h"
+                      must : True
+                      values :
+                        - "w01.ol.aly.mararun.cn"

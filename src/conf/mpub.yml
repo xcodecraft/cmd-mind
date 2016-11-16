@@ -1,32 +1,39 @@
 !cmd
     name : "mpub"
-    call : "/data/x/tools/mara-pub/rocket_pub.sh --prj $prj --plan $plan --tag $tag --env $env --host $host"
-    args :
-        - !arg
-              name    : "prj"
-              must    : True
-              values  : !pipe
-                  cmd : "/bin/ls"
-                  args: "/data/x/tools/mara-pub/projects"
-
-        - !arg
-              name    : "plan"
-              values  : !pipe
-                  cmd : "/bin/ls"
-                  args: "/data/x/tools/mara-pub/projects"
-        - !arg
-              name    : "tag"
-        - !arg
-              name    : "host"
-              values:
-                - "lab"
-                - "demo"
-                - "online"
-        - !arg
-              name    : "env"
-              values:
-                - "lab"
-                - "demo"
-                - "test"
-                - "beta"
-                - "online"
+    subs :
+        - !cmd
+            name : "pylon"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng  --tag $tag --env $env --host $host"
+            args :
+                # - !arg
+                #       name    : "prj"
+                #       must    : True
+                #       values  : !pipe
+                #           cmd : "/bin/ls"
+                #           args: "/data/x/tools/mara-pub/projects"
+                #
+                # - !arg
+                #       name    : "plan"
+                #       values  : !pipe
+                #           cmd : "/bin/ls"
+                #           args: "/data/x/tools/mara-pub/projects"
+                - !arg
+                      name    : "tag"
+                      must:  True
+                - !arg
+                      name    : "host"
+                      hotkey  : "h"
+                      must:  True
+                      values:
+                        - "lab"
+                        - "demo"
+                        - "online"
+                - !arg
+                      name    : "env"
+                      hotkey  : "e"
+                      values:
+                        - "lab"
+                        - "demo"
+                        - "test"
+                        - "beta"
+                        - "online"

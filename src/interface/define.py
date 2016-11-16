@@ -17,10 +17,19 @@ class conf_obj :
         return self.name
 
 class cmd(conf_obj) :
-    subs = []
-    args = []
+    subs    = []
+    args    = []
     options = None
-    call = None
+    call    = None
+    name    = ""
+    def check(self) :
+        if not type(self.subs) == type([]) :
+            raise error.icmd_exception("%s.subs is not  []  " %(self.name))
+        if not type(self.args) == type([]) :
+            raise error.icmd_exception("%s.args is not  []  " %(self.name))
+        if self.name == "" :
+            raise error.icmd_exception("cmd not set name" %(self.name))
+
     def is_match(self,key,strict=False) :
         _logger.debug("[is_match] key:%s name:%s" %(key,self.name))
         if key == self.name  :
@@ -71,6 +80,8 @@ class cmd(conf_obj) :
         options = self.options
         if isinstance(self.options , pipe) :
             options = self.options.get()
+        if options == None :
+            return []
         return options
     def get_prompter(self,key="") :
         _logger.debug("[prompt] cmd : %s" %(self.name))
@@ -110,6 +121,7 @@ class arg(conf_obj) :
     must    = False
     default = ""
     values = None
+    call   = None
     def do(self,cmd_name,value):
         key = "%s_%s" %(cmd_name,self.name)
         calls.write_history(key,value)

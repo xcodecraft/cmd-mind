@@ -1,0 +1,24 @@
+#!/usr/bin/python
+#coding=utf-8
+import  re , os , string ,  getopt ,sys,pdb
+import ConfigParser
+from subprocess import *
+def read_sections(ini) :
+    cf = open(ini)
+    for line in cf.readlines() :
+         m = re.match(r"\t*\[(\w+)\]\t*",line)
+         if m :
+            print  m.group(1)
+if __name__ == '__main__':
+    try :
+        opts, args = getopt.getopt(sys.argv[1:], "i:")
+    except getopt.GetoptError as err:
+        useage()
+        sys.exit(2)
+    if len( opts) == 0 :
+        useage()
+        sys.exit(2)
+    for o, a in opts:
+        if o == "-i":
+            ini = a
+    read_sections(ini)

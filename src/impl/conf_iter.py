@@ -15,6 +15,7 @@ class node_iter :
     def to_root(self) :
         self.root    = self.data
         self.current = self.data
+        self.current.check()
 
     def save(self):
         self.back_points.append({"parent" : self.parent, "current" : self.current})
@@ -33,6 +34,7 @@ class node_iter :
 
     def next(self,key,strict=False):
         for i in self.current.subs :
+            i.check()
             if i.is_match(key,strict) :
                 self.save()
                 self.parent  = self.current
@@ -45,8 +47,6 @@ class node_iter :
         _logger.debug("match cmd :%s" %(self.current.name))
         _logger.debug("cmdline :%s" %(cmder))
         self.to_root()
-        # import pdb
-        # pdb.set_trace()
         for cmd in cmder.cmds :
             if not self.next(cmd,strict=True) :
                 return False
