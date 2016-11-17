@@ -1,5 +1,0 @@
-CUR_DIR=$(cd "$(dirname "$0")"; pwd)
-export ICMD_CONF=$CUR_DIR/../conf/ver.yml
-export ICMD_MAIN=xver
-$CUR_DIR/../icmd $*
-

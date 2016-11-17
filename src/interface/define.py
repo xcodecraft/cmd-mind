@@ -31,6 +31,19 @@ class cmd(conf_obj) :
         for sub in self.subs :
             sub.conf()
 
+    def help(self):
+        mainmsg = "%s" %(self.name)
+        subsmsg = ""
+        argsmsg = ""
+        if len(self.subs) >0 :
+            for sub in self.subs :
+                subsmsg = "%s %s" %(subsmsg,sub.help())
+                break 
+        else: 
+            for arg in self.args :
+                argsmsg  = "%s %s" %(argsmsg,arg.help())
+        return "%s %s %s" %(mainmsg,subsmsg,argsmsg)
+
     def check(self) :
         if not type(self.subs) == type([]) :
             raise error.icmd_exception("%s.subs is not  []  " %(self.name))
@@ -118,13 +131,13 @@ class cmd(conf_obj) :
 
         execmd =  self.getcmd()
         for arg in self.args:
-            if arg.must == False :
-                continue
             val = None
             if cmder.args.has_key(arg.name) :
                 val = cmder.args[arg.name]
             if cmder.args.has_key(arg.hotkey) :
                 val = cmder.args[arg.hotkey]
+            if arg.must == False and val == None :
+                continue
             execmd  = "%s %s" %(execmd, arg.getcmd(val))
         _logger.info("cmd: %s" %(execmd))
         print("\n%s" %execmd)
@@ -137,7 +150,15 @@ class arg(conf_obj) :
     default = None
     values  = None
     call    = None
-
+    def help(self) :
+        msg = ""
+        if self.hotkey is not None :
+            msg = "-%s <%s>" %(self.hotkey,self.name)
+        else :
+            msg = "--%s <%s>" %(self.name,self.name)
+        if not self.must :
+           msg =  "[ %s ]" %(msg)
+        return msg 
     def is_match(self,key) :
         return key == self.name
     def getcmd(self,val) :
@@ -151,7 +172,10 @@ class arg(conf_obj) :
         if self.call is None :
             return "--%s %s" %(self.name,val)
         else:
-            return string.Template(self.call).substitute({self.name : val})
+            try :
+                return string.Template(self.call).substitute({self.name : val})
+            except :
+                raise error.icmd_exception("error! args call:[%s], but key is: %s"%(self.call,self.name))
 
     def report(self,cmder) :
         cmder.add_arg(self.name,self.value)

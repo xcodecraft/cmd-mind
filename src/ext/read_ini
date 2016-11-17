@@ -3,22 +3,32 @@
 import  re , os , string ,  getopt ,sys,pdb
 import ConfigParser
 from subprocess import *
-def read_sections(ini) :
+def read_sections(ini,cflag) :
     cf = open(ini)
     for line in cf.readlines() :
          m = re.match(r"\t*\[(\w+)\]\t*",line)
-         if m :
+         if cflag == 'g' and m :
             print  m.group(1)
+            continue 
+         if cflag == 'a' and not m :
+            print  line.strip()
+
 if __name__ == '__main__':
     try :
-        opts, args = getopt.getopt(sys.argv[1:], "i:")
+        opts, args = getopt.getopt(sys.argv[1:], "f:a")
     except getopt.GetoptError as err:
         useage()
         sys.exit(2)
     if len( opts) == 0 :
         useage()
         sys.exit(2)
+    cflag = "g"
     for o, a in opts:
-        if o == "-i":
+        if o == "-f":
             ini = a
-    read_sections(ini)
+        if o == "-g":
+            cflag = "g"
+        if o == "-a":
+            cflag = "a"
+        
+    read_sections(ini,cflag)

@@ -1,4 +1,4 @@
- !cmd
+main: !cmd
     name : "xsh"
     subs :
         - !cmd
@@ -6,48 +6,43 @@
             call : "ssh $host"
             args :
                 - !arg
-                      name : "host"
+                      name    : "host"
                       hotkey  : "h"
-                      must : True
-                      values :
-                        - "lab.dev.aly.mararun.cn"
+                      must    : True
+                      default : "lab.dev.aly.mararun.cn"
 
         - !cmd
             name : "demo"
             call : "ssh $host"
             args :
                 - !arg
-                      name : "host"
+                      name    : "host"
                       hotkey  : "h"
-                      must : True
-                      values :
-                        - "demo1.dev.aly.mararun.cn"
-                        - "demo2.dev.aly.mararun.cn"
+                      must    : True
+                      default : "demo1.dev.aly.mararun.cn"
 
         - !cmd
             name : "test"
             call : "ssh $host"
             args :
                 - !arg
-                      name : "host"
+                      name    : "host"
                       hotkey  : "h"
-                      must : True
-                      values :
-                        - "test1.dev.aly.mararun.cn"
+                      must    : True
+                      default : "test1.dev.aly.mararun.cn"
 
         - !cmd
             name : "beat"
             call : "ssh $host"
             args :
                 - !arg
-                      name : "host"
+                      name    : "host"
                       hotkey  : "h"
-                      must : True
-                      values :
-                        - "beta1.ol.aly.mararun.cn"
+                      must    : True
+                      default : "beta1.ol.aly.mararun.cn"
 
         - !cmd
-            name : "online"
+            name : "ol"
             call : "ssh $host"
             args :
                 - !arg
@@ -56,3 +51,12 @@
                       must : True
                       values :
                         - "w01.ol.aly.mararun.cn"
+                        - "w02.ol.aly.mararun.cn"
+                        - "w03.ol.aly.mararun.cn"
+                        - "w04.ol.aly.mararun.cn"
+                        - "w05.ol.aly.mararun.cn"
+                        - "task01.ol.aly.mararun.cn"
+                        - "svc01.ol.aly.mararun.cn"
+                        - "svc02.ol.aly.mararun.cn"
+                        - "res01.ol.aly.mararun.cn"
+                        - "res02.ol.aly.mararun.cn"

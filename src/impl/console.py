@@ -53,6 +53,9 @@ class cmd_io :
         self.recorder  = input_receiver()
         self.receiver = combin_receiver(self.recorder,console_receiver())
         pass
+    def reback_begin(self):
+        self.input_buf = self.recorder.data 
+        self.receiver.reback_word(self.recorder.data)
 
 
     def input(self,cmder,node_iter) :
@@ -63,6 +66,7 @@ class cmd_io :
 
 
         backing = False 
+        print(node_iter.current.help())
         with  console_mode() :
             while True:
                     ch = self.get_char()
@@ -78,8 +82,7 @@ class cmd_io :
                     else :
                         if backing  : 
                             backing        = False
-                            self.input_buf = self.recorder.data 
-                            self.receiver.reback_word(self.recorder.data)
+                            self.reback_begin()
                             self.input_begin()
                             self.input_buf  += ch
                             continue 

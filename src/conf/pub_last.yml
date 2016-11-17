@@ -10,14 +10,20 @@ args1 : &commonargs
           values: !pipe
               cmd : "./ext/last_tag"
               args: "${_CMD_NAME} 5"
+    - !arg &group_arg
+          name   : "group"
+          hotkey : "g"
+          call   : "--host $group"
+          values : !pipe
+              cmd : "./ext/read_ini"
+              args: "-f /data/x/tools/mara-pub/projects/${_CMD_NAME}/hosts"
     - !arg &host_arg
           name   : "host"
           hotkey : "h"
-          must   : True
           call   : "--host $host"
           values : !pipe
               cmd : "./ext/read_ini"
-              args: "-i /data/x/tools/mara-pub/projects/${_CMD_NAME}/hosts"
+              args: "-f /data/x/tools/mara-pub/projects/${_CMD_NAME}/hosts -a "
 
 args2 : &prjargs
     - *tag_arg 
@@ -61,6 +67,11 @@ main : !cmd
             name : "mara_sdk"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_sdk"
             args : *commonargs
+        - !cmd
+            name : "xcc_sdks"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_sdks"
+            args : *commonargs
+
         - !cmd
             name : "user-gateway"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
