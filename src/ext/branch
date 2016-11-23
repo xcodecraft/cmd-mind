@@ -1,0 +1,4 @@
+#!/bin/bash
+PRJ=$1
+cd $HOME/devspace/$PRJ
+git branch | grep "release" | sed "s/*//" 

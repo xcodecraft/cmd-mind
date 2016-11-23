@@ -34,8 +34,6 @@ main: !cmd
             args :
                 - *group_arg 
                 - *host_arg
-
-    subs:
         - !cmd
             name : "restart"
             call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/tools/mara_bin/rg_all.sh stop,clean,reconf,start"'

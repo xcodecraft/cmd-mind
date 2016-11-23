@@ -1,0 +1,74 @@
+args1 : &commonargs
+    - !arg &branch_arg 
+          name    : "tag"
+          hotkey  : "t"
+          must:  True
+          call : "--tag $tag"
+          values: !pipe
+              cmd : "./ext/branch"
+              args: "pylon-ng"
+
+    - !arg &tag_arg 
+          name    : "tag"
+          hotkey  : "t"
+          must:  True
+          call : "--tag $tag"
+          default: !pipe
+              cmd : "./ext/last_tag"
+              args: "pylon-ng 1"
+          values: !pipe
+              cmd : "./ext/last_tag"
+              args: "pylon-ng 5"
+    - !arg &group_arg
+          name   : "group"
+          hotkey : "g"
+          call   : "--host $group"
+          values : !pipe
+              cmd : "./ext/read_ini"
+              args: "-f /data/x/tools/mara-pub/projects/pylon-ng/hosts"
+    - !arg &host_arg
+          name   : "host"
+          hotkey : "h"
+          call   : "--host $host"
+          values : !pipe
+              cmd : "./ext/read_ini"
+              args: "-f /data/x/tools/mara-pub/projects/pylon-ng/hosts -a "
+
+main : !cmd
+    name : "pub-pylon"
+    subs :
+        - !cmd
+            name : "beta"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng --plan pylon-ng-beta"
+            args : 
+                - *host_arg 
+                - *group_arg 
+                - !arg 
+                      name    : "tag"
+                      hotkey  : "t"
+                      must:  True
+                      call : "--tag $tag"
+                      default: !pipe
+                          cmd : "./ext/last_tag"
+                          args: "pylon-ng 1 0.20."
+                      values: !pipe
+                          cmd : "./ext/last_tag"
+                          args: "pylon-ng 5 0.20."
+        - !cmd
+            name : "online"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng --plan pylon-ng"
+            args : 
+                - *host_arg 
+                - *group_arg 
+                - !arg 
+                      name    : "tag"
+                      hotkey  : "t"
+                      must:  True
+                      call : "--tag $tag"
+                      default: !pipe
+                          cmd : "./ext/last_tag"
+                          args: "pylon-ng 1 0.19."
+                      values: !pipe
+                          cmd : "./ext/last_tag"
+                          args: "pylon-ng 5 0.19."
+

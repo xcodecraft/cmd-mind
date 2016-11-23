@@ -73,6 +73,16 @@ main : !cmd
             args : *commonargs
 
         - !cmd
+            name : "xcc_env"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_env"
+            args : *commonargs
+
+        - !cmd
+            name : "mara_env"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_env"
+            args : *commonargs
+
+        - !cmd
             name : "user-gateway"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
             args : *commonargs

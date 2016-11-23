@@ -1,4 +1,4 @@
-!cmd
+main: !cmd
     name : "mpub"
     subs :
         - !cmd
