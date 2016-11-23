@@ -5,7 +5,7 @@ args1 : &commonargs
           must:  True
           call : "--tag $tag"
           values: !pipe
-              cmd : "./ext/branch"
+              cmd : "${CMD_ROOT}/ext/branch"
               args: "pylon-ng"
 
     - !arg &tag_arg 
@@ -14,24 +14,24 @@ args1 : &commonargs
           must:  True
           call : "--tag $tag"
           default: !pipe
-              cmd : "./ext/last_tag"
+              cmd : "${CMD_ROOT}/ext/last_tag"
               args: "pylon-ng 1"
           values: !pipe
-              cmd : "./ext/last_tag"
+              cmd : "${CMD_ROOT}/ext/last_tag"
               args: "pylon-ng 5"
     - !arg &group_arg
           name   : "group"
           hotkey : "g"
           call   : "--host $group"
           values : !pipe
-              cmd : "./ext/read_ini"
+              cmd : "${CMD_ROOT}/ext/read_ini"
               args: "-f /data/x/tools/mara-pub/projects/pylon-ng/hosts"
     - !arg &host_arg
           name   : "host"
           hotkey : "h"
           call   : "--host $host"
           values : !pipe
-              cmd : "./ext/read_ini"
+              cmd : "${CMD_ROOT}/ext/read_ini"
               args: "-f /data/x/tools/mara-pub/projects/pylon-ng/hosts -a "
 
 main : !cmd
@@ -49,10 +49,10 @@ main : !cmd
                       must:  True
                       call : "--tag $tag"
                       default: !pipe
-                          cmd : "./ext/last_tag"
+                          cmd : "${CMD_ROOT}/ext/last_tag"
                           args: "pylon-ng 1 0.20."
                       values: !pipe
-                          cmd : "./ext/last_tag"
+                          cmd : "${CMD_ROOT}/ext/last_tag"
                           args: "pylon-ng 5 0.20."
         - !cmd
             name : "online"
@@ -66,9 +66,9 @@ main : !cmd
                       must:  True
                       call : "--tag $tag"
                       default: !pipe
-                          cmd : "./ext/last_tag"
+                          cmd : "${CMD_ROOT}/ext/last_tag"
                           args: "pylon-ng 1 0.19."
                       values: !pipe
-                          cmd : "./ext/last_tag"
+                          cmd : "${CMD_ROOT}/ext/last_tag"
                           args: "pylon-ng 5 0.19."
 
