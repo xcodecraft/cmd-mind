@@ -6,24 +6,24 @@ args1 : &commonargs
           call : "--tag $tag"
           default: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
-              args: "${_CMD_NAME} 1"
+              args: "&{_CMD_NAME} 1"
           values: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
-              args: "${_CMD_NAME} 5"
+              args: "&{_CMD_NAME} 5"
     - !arg &group_arg
           name   : "group"
           hotkey : "g"
           call   : "--host $group"
           values : !pipe
               cmd : "${CMD_ROOT}/ext/read_ini"
-              args: "-f /data/x/tools/mara-pub/projects/${_CMD_NAME}/hosts"
+              args: "-f /data/x/tools/mara-pub/projects/&{_CMD_NAME}/hosts"
     - !arg &host_arg
           name   : "host"
           hotkey : "h"
           call   : "--host $host"
           values : !pipe
-              cmd : "{CMD_ROOT}/ext/read_ini"
-              args: "-f /data/x/tools/mara-pub/projects/${_CMD_NAME}/hosts -a "
+              cmd : "${CMD_ROOT}/ext/read_ini"
+              args: "-f /data/x/tools/mara-pub/projects/&{_CMD_NAME}/hosts -a "
 
 args2 : &prjargs
     - *tag_arg 

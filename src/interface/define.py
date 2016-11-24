@@ -207,8 +207,8 @@ class pipe(conf_obj) :
     cmd = None
     args = ""
     def get(self) :
-        self.cmd  = value_of(self.cmd)
-        self.args = value_of(self.args)
+        self.cmd  = value_of(self.cmd,'&')
+        self.args = value_of(self.args,'&')
 
         if not os.path.exists(self.cmd) :
             raise error.icmd_exception("cmd is not exists : %s" %(self.cmd))
