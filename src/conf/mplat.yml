@@ -6,10 +6,10 @@ args1 : &commonargs
           call : "--tag $tag"
           default: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
-              args: "${_CMD_NAME} 1"
+              args: "&{_CMD_NAME} 1"
           values: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
-              args: "${_CMD_NAME} 5"
+              args: "&{_CMD_NAME} 5"
     - !arg &group_arg
           name   : "group"
           hotkey : "g"
