@@ -64,10 +64,10 @@ main : !cmd
                         - *host_arg 
                         - *group_arg 
                         - !arg 
-                              name    : "tag"
-                              hotkey  : "t"
-                              must:  True
-                              call : "--tag $tag"
+                              name   : "tag"
+                              hotkey : "t"
+                              must   : True
+                              call   : "--tag $tag"
                               default: !pipe
                                   cmd : "${CMD_ROOT}/ext/last_tag"
                                   args: "pylon-ng 1 0.19."

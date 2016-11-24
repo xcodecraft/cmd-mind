@@ -79,6 +79,11 @@ main : !cmd
             name : "mara_env"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_env"
             args : *commonargs
+                
+        - !cmd
+            name : "marathon-web"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj marathon-web"
+            args : *prjargs
 
         - !cmd
             name : "user-gateway"
