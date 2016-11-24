@@ -33,12 +33,21 @@ class cmd(conf_obj) :
 
     def help(self):
         mainmsg = "%s" %(self.name)
+        if self.name.strip() == "*" :
+            optmsg = ""
+            for opt in self.options :
+                optmsg = "%s/%s" %(optmsg,opt)
+            mainmsg = optmsg
+
         subsmsg = ""
         argsmsg = ""
         if len(self.subs) >0 :
+            i = 0 
             for sub in self.subs :
-                subsmsg = "%s %s" %(subsmsg,sub.help())
-                break 
+                subsmsg = "%s\n %s" %(subsmsg,sub.help())
+                if i == 3 : 
+                    break
+                i = i + 1
         else: 
             for arg in self.args :
                 argsmsg  = "%s %s" %(argsmsg,arg.help())

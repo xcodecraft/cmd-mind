@@ -1,5 +1,0 @@
-CUR_DIR=$(cd "$(dirname "$0")"; pwd)
-export CMD_ROOT=`dirname $CUR_DIR`
-export ICMD_CONF=$CUR_DIR/../conf/pub_last.yml
-export ICMD_MAIN=publast
-$CUR_DIR/../icmd $*

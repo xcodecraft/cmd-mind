@@ -1,5 +1,5 @@
 CUR_DIR=$(cd "$(dirname "$0")"; pwd)
 export CMD_ROOT=`dirname $CUR_DIR`
-export ICMD_CONF=$CUR_DIR/../conf/pub_pylon.yml
-export ICMD_MAIN=pub-pylon
+export ICMD_CONF=$CMD_ROOT/conf/expub.yml
+export ICMD_MAIN=expub
 $CUR_DIR/../icmd $*
