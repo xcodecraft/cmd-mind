@@ -42,6 +42,7 @@ args2 : &prjargs
             - "online"
             - "online-b"
 
+
 main : !cmd
     name : "publast"
     subs :
@@ -89,6 +90,12 @@ main : !cmd
             name : "user-gateway"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
             args : *commonargs
+
+        - !cmd
+            name : "mara-pub"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara-pub --host dev"
+            args : 
+                - *tag_arg 
 
         - !cmd
             name : "uac"
