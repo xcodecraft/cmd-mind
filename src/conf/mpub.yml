@@ -28,6 +28,7 @@ args1 : &commonargs
 args2 : &prjargs
     - *tag_arg 
     - *host_arg 
+    - *group_arg 
     - !arg 
           name   : "env"
           hotkey : "e"
