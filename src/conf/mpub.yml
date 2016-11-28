@@ -62,7 +62,7 @@ main : !cmd
         - !cmd
             name : "api-hub"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj api-hub"
-            args : *commonargs
+            args : *prjargs
         - !cmd
             name : "mara_sdk"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_sdk"
