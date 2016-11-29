@@ -181,6 +181,4 @@ class cmd_mode (input_mode):
             return
         if ch == '"' :
             return
-        if ch == '-' :
-            return
         receiver.record_char(ch)
