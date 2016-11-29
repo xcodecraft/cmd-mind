@@ -172,8 +172,6 @@ class cmd_mode (input_mode):
     def mode(self,ch) :
         if ch == '\t' :
             return   cmd_prompt_mode(self,self.receiver.data)
-        if ch == '-' :
-            return argkey_mode()
         if ch == ' ' :
             return space_mode()
         return self
