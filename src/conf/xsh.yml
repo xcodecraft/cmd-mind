@@ -33,4 +33,6 @@ main: !cmd
                         - "res01.ol.aly.mararun.cn"
                         - "res02.ol.aly.mararun.cn"
                         - "beta1.ol.aly.mararun.cn"
+                        - "log1.ol.aly.mararun.cn"
+
 
