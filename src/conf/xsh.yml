@@ -2,45 +2,17 @@ main: !cmd
     name : "xsh"
     subs :
         - !cmd
-            name : "lab"
+            name : "dev"
             call : "ssh $host"
             args :
                 - !arg
                       name    : "host"
                       hotkey  : "h"
                       must    : True
-                      default : "lab.dev.aly.mararun.cn"
-
-        - !cmd
-            name : "demo"
-            call : "ssh $host"
-            args :
-                - !arg
-                      name    : "host"
-                      hotkey  : "h"
-                      must    : True
-                      default : "demo1.dev.aly.mararun.cn"
-
-        - !cmd
-            name : "test"
-            call : "ssh $host"
-            args :
-                - !arg
-                      name    : "host"
-                      hotkey  : "h"
-                      must    : True
-                      default : "test1.dev.aly.mararun.cn"
-
-        - !cmd
-            name : "beat"
-            call : "ssh $host"
-            args :
-                - !arg
-                      name    : "host"
-                      hotkey  : "h"
-                      must    : True
-                      default : "beta1.ol.aly.mararun.cn"
-
+                      values : 
+                        - "lab.dev.aly.mararun.cn"
+                        - "demo1.dev.aly.mararun.cn"
+                        - "test1.dev.aly.mararun.cn"
         - !cmd
             name : "ol"
             call : "ssh $host"
@@ -60,3 +32,5 @@ main: !cmd
                         - "svc02.ol.aly.mararun.cn"
                         - "res01.ol.aly.mararun.cn"
                         - "res02.ol.aly.mararun.cn"
+                        - "beta1.ol.aly.mararun.cn"
+
