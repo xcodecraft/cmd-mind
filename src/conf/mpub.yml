@@ -56,6 +56,11 @@ main : !cmd
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng"
             args : *commonargs
         - !cmd
+            name : "rigger-ng"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj rigger-ng"
+            args : *commonargs
+
+        - !cmd
             name : "alisdk"
             call : "/data/x/tools/mara-pub/rocket_pub.sh --prj aliyun_sdks"
             args : *commonargs
