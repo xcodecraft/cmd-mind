@@ -6,24 +6,24 @@ args1 : &commonargs
           call : "--tag $tag"
           default: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
-              args: "&{_CMD_NAME} 1"
+              args: "${DPRJ} 1"
           values: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
-              args: "&{_CMD_NAME} 5"
+              args: "${DPRJ} 5"
     - !arg &group_arg
           name   : "group"
           hotkey : "g"
           call   : "--host $group"
           values : !pipe
               cmd : "${CMD_ROOT}/ext/read_ini"
-              args: "-f /data/x/tools/mara-pub/projects/&{_CMD_NAME}/hosts"
+              args: "-f /data/x/tools/mara-pub/projects/${DPRJ}/hosts"
     - !arg &host_arg
           name   : "host"
           hotkey : "h"
           call   : "--host $host"
           values : !pipe
               cmd : "${CMD_ROOT}/ext/read_ini"
-              args: "-f /data/x/tools/mara-pub/projects/&{_CMD_NAME}/hosts -a "
+              args: "-f /data/x/tools/mara-pub/projects/${DPRJ}/hosts -a "
 
 args2 : &prjargs
     - *tag_arg 
@@ -58,127 +58,132 @@ args3 :
           values : !pipe
               cmd : "${CMD_ROOT}/ext/read_ini"
               args: "-f /data/x/tools/mara-pub/conf/all.hosts -a"
+cmd1: 
+    - !cmd &pub_cmd
+        name : "pub"
+        call : "/data/x/tools/mara-pub/rocket_pub.sh --prj ${DPRJ} "
+        args : 
+            - *all_group 
+            - *all_host
+            - !arg 
+                  name   : "tag"
+                  hotkey : "t"
+                  must   : True
+                  call   : "--tag $tag"
+                  default: !pipe
+                      cmd : "${CMD_ROOT}/ext/last_tag"
+                      args: "${DPRJ} 1 ${DVER}."
+                  values: !pipe
+                      cmd : "${CMD_ROOT}/ext/last_tag"
+                      args: "${DPRJ} 5 ${DVER}."
+
+    - !cmd &simple_pub_cmd
+        name : "pub"
+        vars : 
+            PRJ : "rigger-ng "
+        call : "/data/x/tools/mara-pub/rocket_pub.sh --prj ${DPRJ}"
+        args : *commonargs
+    - !cmd &setup_cmd
+        name : "setup"
+        call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "${SETUP_CMD}"'
+        args : 
+            - *all_group 
+            - *all_host
 
 main : !cmd
     name : "mpub"
     subs :
         - !cmd
-            name : "cmd-mind"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj cmd-mind"
-            args : *commonargs
-        - !cmd
             name : "pylon-ng"
             subs :
                 - !cmd
-                    name : "R0.19"
+                    name : "PHP5"
+                    vars :
+                        DVER : "0.19"
+                        DPRJ : "pylon-ng"
+                        SETUP_CMD : "/data/x/libs/pylon-ng/modules/setup.sh"
                     subs :
-                        - !cmd
-                            name : "setup"
-                            call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/libs/pylon-ng/modules/setup.sh"'
-                            args : 
-                                - *all_group 
-                                - *all_host
-                        - !cmd 
-                            name : "pub"
-                            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng "
-                            args : 
-                                - *all_group 
-                                - *all_host
-                                - !arg 
-                                      name   : "tag"
-                                      hotkey : "t"
-                                      must   : True
-                                      call   : "--tag $tag"
-                                      default: !pipe
-                                          cmd : "${CMD_ROOT}/ext/last_tag"
-                                          args: "pylon-ng 1 0.19."
-                                      values: !pipe
-                                          cmd : "${CMD_ROOT}/ext/last_tag"
-                                          args: "pylon-ng 5 0.19."
+                        - *setup_cmd
+                        - *pub_cmd 
 
                 - !cmd
-                    name : "R0.20"
-                    subs :
-                        - !cmd
-                            name : "setup"
-                            call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/libs/pylon-ng-0.20/modules/setup.sh"'
-                            args : 
-                                - *all_group 
-                                - *all_host
-                        - !cmd 
-                            name : "pub"
-                            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng --dver 0.20"
-                            args : 
-                                - *all_group 
-                                - *all_host
-                                - !arg 
-                                      name   : "tag"
-                                      hotkey : "t"
-                                      must   : True
-                                      call   : "--tag $tag"
-                                      default: !pipe
-                                          cmd : "${CMD_ROOT}/ext/last_tag"
-                                          args: "pylon-ng 1 0.20."
-                                      values: !pipe
-                                          cmd : "${CMD_ROOT}/ext/last_tag"
-                                          args: "pylon-ng 5 0.20."
+                    name : "PHP7"
+                    vars :
+                        DVER : "0.20"
+                        DPRJ : "pylon-ng"
+                        SETUP_CMD : "/data/x/libs/pylon-ng-0.20/modules/setup.sh"
 
+                    subs :
+                        - *setup_cmd
+                        - *pub_cmd
 
         - !cmd
             name : "rigger-ng"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj rigger-ng"
-            args : *commonargs
+            vars :
+                DVER : ""
+                DPRJ : "rigger-ng"
+            subs:
+                - *pub_cmd
+        - !cmd
+            name : "cmd-mind"
+            vars :
+                DVER : ""
+                DPRJ : "cmd-mind"
+            subs:
+                - *pub_cmd
 
-        - !cmd
-            name : "alisdk"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj aliyun_sdks"
-            args : *commonargs
-        - !cmd
-            name : "api-hub"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj api-hub"
-            args : *prjargs
-        - !cmd
-            name : "mara_sdk"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_sdk"
-            args : *commonargs
-        - !cmd
-            name : "xcc_sdks"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_sdks"
-            args : *commonargs
-
-        - !cmd
-            name : "xcc_env"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_env"
-            args : *commonargs
-
-        - !cmd
-            name : "mara_env"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_env"
-            args : *commonargs
-                
-        - !cmd
-            name : "marathon-web"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj marathon-web"
-            args : *prjargs
-
-        - !cmd
-            name : "user-gateway"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
-            args : *commonargs
-
-        - !cmd
-            name : "mara-pub"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara-pub --host dev"
-            args : 
-                - *tag_arg 
-
-        - !cmd
-            name : "uac"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj uac"
-            args : *prjargs
-
-        - !cmd
-            name : "louis-web"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj louis-web"
-            args : *prjargs
-
+        # - !cmd
+        #     name : "alisdk"
+        #     vars : 
+        #         PRJ : "aliyun_sdks"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj aliyun_sdks"
+        #     args : *commonargs
+        # - !cmd
+        #     name : "api-hub"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj api-hub"
+        #     args : *prjargs
+        # - !cmd
+        #     name : "mara_sdk"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_sdk"
+        #     args : *commonargs
+        # - !cmd
+        #     name : "xcc_sdks"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_sdks"
+        #     args : *commonargs
+        #
+        # - !cmd
+        #     name : "xcc_env"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_env"
+        #     args : *commonargs
+        #
+        # - !cmd
+        #     name : "mara_env"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_env"
+        #     args : *commonargs
+        #         
+        # - !cmd
+        #     name : "marathon-web"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj marathon-web"
+        #     args : *prjargs
+        #
+        # - !cmd
+        #     name : "user-gateway"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
+        #     args : *commonargs
+        #
+        # - !cmd
+        #     name : "mara-pub"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara-pub --host dev"
+        #     args : 
+        #         - *tag_arg 
+        #
+        # - !cmd
+        #     name : "uac"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj uac"
+        #     args : *prjargs
+        #
+        # - !cmd
+        #     name : "louis-web"
+        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj louis-web"
+        #     args : *prjargs
+        #

@@ -26,6 +26,8 @@ class loader:
         doc = self.load()
         if ori is not None:
             doc = doc.replace(ori,"!!python/object:" + new)
-        doc  = utls.var_proc.value_of(doc) 
+        # doc  = utls.var_proc.value_of(doc) 
         data = yaml.load(doc)
-        return data['main']
+        main = data['main']
+        main.on_load()
+        return main

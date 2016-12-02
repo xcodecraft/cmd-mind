@@ -9,6 +9,8 @@ class conf_obj :
     name = ""
     def echo(self):
         print(self.name)
+    def on_load(self):
+        pass 
     def is_match(self,key) :
         pass
 
@@ -19,9 +21,18 @@ class conf_obj :
     def conf(self):
         pass
 
-class cmd(conf_obj) :
+class load_utls  :
+    def do_load_of(self,k) :
+        if (self.__dict__.has_key(k)) :
+            if isinstance(self.__dict__[k],str) :
+                self.__dict__[k] = utls.var_proc.value_of(self.__dict__[k])
+            if isinstance(self.__dict__[k],conf_obj) :
+                self.__dict__[k].on_load()
+
+class cmd(conf_obj,load_utls) :
     subs    = []
     args    = []
+    vars    = {}
     options = None
     call    = None
     name    = ""
@@ -30,6 +41,17 @@ class cmd(conf_obj) :
         os.environ['_CMD_NAME'] = self.name
         for sub in self.subs :
             sub.conf()
+    def on_load(self):
+        for k,v in self.vars.items() :
+            os.environ[k] = v  
+        self.do_load_of('call')
+        self.do_load_of('name')
+        for sub in self.subs :
+            sub.on_load()
+
+        for arg in self.args :
+            arg.on_load()
+
 
     def help(self,cmdlevel=1):
         mainmsg = "%s" %(self.name)
@@ -51,7 +73,7 @@ class cmd(conf_obj) :
         else: 
             for arg in self.args :
                 argsmsg  = "%s %s" %(argsmsg,arg.help())
-        return "{0:10} {1} {2:10}".format(mainmsg,subsmsg,argsmsg)
+        return "{0:10} {1} {2}".format(mainmsg,subsmsg,argsmsg)
 
     def check(self) :
         if not type(self.subs) == type([]) :
@@ -152,13 +174,18 @@ class cmd(conf_obj) :
         print("\n%s" %execmd)
         os.system(execmd)
 
-class arg(conf_obj) :
+class arg(conf_obj,load_utls) :
     hotkey  = None
     value   = None
     must    = False
     default = None
     values  = None
     call    = None
+    def on_load(self) :
+        self.do_load_of('default') 
+        self.do_load_of('values') 
+        self.do_load_of('call') 
+
     def help(self) :
         msg = ""
         if self.hotkey is not None :
@@ -212,9 +239,12 @@ class arg(conf_obj) :
         _logger.warn("[prompt] not values ")
         return None
 
-class pipe(conf_obj) :
+class pipe(conf_obj,load_utls) :
     cmd = None
     args = ""
+    def on_load(self) :
+        self.do_load_of('cmd')
+        self.do_load_of('args')
     def get(self) :
         self.cmd  = value_of(self.cmd,'&')
         self.args = value_of(self.args,'&')
