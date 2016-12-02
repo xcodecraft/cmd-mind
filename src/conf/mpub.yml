@@ -60,7 +60,7 @@ args3 :
               args: "-f /data/x/tools/mara-pub/conf/all.hosts -a"
 
 main : !cmd
-    name : "publast"
+    name : "mpub"
     subs :
         - !cmd
             name : "cmd-mind"
@@ -71,39 +71,57 @@ main : !cmd
             subs :
                 - !cmd
                     name : "R0.19"
-                    call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng "
-                    args : 
-                        - *all_group 
-                        - *all_host
-                        - !arg 
-                              name   : "tag"
-                              hotkey : "t"
-                              must   : True
-                              call   : "--tag $tag"
-                              default: !pipe
-                                  cmd : "${CMD_ROOT}/ext/last_tag"
-                                  args: "pylon-ng 1 0.19."
-                              values: !pipe
-                                  cmd : "${CMD_ROOT}/ext/last_tag"
-                                  args: "pylon-ng 5 0.19."
+                    subs :
+                        - !cmd
+                            name : "setup"
+                            call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/libs/pylon-ng/modules/setup.sh"'
+                            args : 
+                                - *all_group 
+                                - *all_host
+                        - !cmd 
+                            name : "pub"
+                            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng "
+                            args : 
+                                - *all_group 
+                                - *all_host
+                                - !arg 
+                                      name   : "tag"
+                                      hotkey : "t"
+                                      must   : True
+                                      call   : "--tag $tag"
+                                      default: !pipe
+                                          cmd : "${CMD_ROOT}/ext/last_tag"
+                                          args: "pylon-ng 1 0.19."
+                                      values: !pipe
+                                          cmd : "${CMD_ROOT}/ext/last_tag"
+                                          args: "pylon-ng 5 0.19."
 
                 - !cmd
                     name : "R0.20"
-                    call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng --dver 0.20"
-                    args : 
-                        - *all_group 
-                        - *all_host
-                        - !arg 
-                              name   : "tag"
-                              hotkey : "t"
-                              must   : True
-                              call   : "--tag $tag"
-                              default: !pipe
-                                  cmd : "${CMD_ROOT}/ext/last_tag"
-                                  args: "pylon-ng 1 0.20."
-                              values: !pipe
-                                  cmd : "${CMD_ROOT}/ext/last_tag"
-                                  args: "pylon-ng 5 0.20."
+                    subs :
+                        - !cmd
+                            name : "setup"
+                            call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/libs/pylon-ng-0.20/modules/setup.sh"'
+                            args : 
+                                - *all_group 
+                                - *all_host
+                        - !cmd 
+                            name : "pub"
+                            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj pylon-ng --dver 0.20"
+                            args : 
+                                - *all_group 
+                                - *all_host
+                                - !arg 
+                                      name   : "tag"
+                                      hotkey : "t"
+                                      must   : True
+                                      call   : "--tag $tag"
+                                      default: !pipe
+                                          cmd : "${CMD_ROOT}/ext/last_tag"
+                                          args: "pylon-ng 1 0.20."
+                                      values: !pipe
+                                          cmd : "${CMD_ROOT}/ext/last_tag"
+                                          args: "pylon-ng 5 0.20."
 
 
         - !cmd
@@ -156,7 +174,7 @@ main : !cmd
 
         - !cmd
             name : "uac"
-            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj louis-web"
+            call : "/data/x/tools/mara-pub/rocket_pub.sh --prj uac"
             args : *prjargs
 
         - !cmd
