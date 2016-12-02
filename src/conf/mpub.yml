@@ -197,8 +197,12 @@ main : !cmd
         #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj uac"
         #     args : *prjargs
         #
-        # - !cmd
-        #     name : "louis-web"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj louis-web"
-        #     args : *prjargs
-        #
+        - !cmd
+            name : "louis-web"
+            vars :
+                DVER : ""
+                DPRJ : "louis-web"
+            subs:
+                - *fetch_cmd 
+                - *pub_cmd
+
