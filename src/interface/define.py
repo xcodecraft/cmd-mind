@@ -31,7 +31,7 @@ class cmd(conf_obj) :
         for sub in self.subs :
             sub.conf()
 
-    def help(self):
+    def help(self,cmdlevel=1):
         mainmsg = "%s" %(self.name)
         if self.name.strip() == "*" :
             optmsg = ""
@@ -44,14 +44,14 @@ class cmd(conf_obj) :
         if len(self.subs) >0 :
             i = 0 
             for sub in self.subs :
-                subsmsg = "%s\n %s" %(subsmsg,sub.help())
+                subsmsg = "{0}\n{1:{width}}{2}".format(subsmsg,' ',sub.help(cmdlevel+1),width=cmdlevel * 5 )
                 if i == 3 : 
                     break
                 i = i + 1
         else: 
             for arg in self.args :
                 argsmsg  = "%s %s" %(argsmsg,arg.help())
-        return "%s %s %s" %(mainmsg,subsmsg,argsmsg)
+        return "{0:10} {1} {2:10}".format(mainmsg,subsmsg,argsmsg)
 
     def check(self) :
         if not type(self.subs) == type([]) :
