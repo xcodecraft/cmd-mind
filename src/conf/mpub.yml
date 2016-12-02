@@ -89,28 +89,31 @@ cmd1:
         args : 
             - *all_group 
             - *all_host
+    - !cmd &fetch_cmd
+        name : "fetch"
+        call  : '${CMD_ROOT}/ext/git_fetch ${HOME}/devspace/${DPRJ}'
 
 main : !cmd
     name : "mpub"
     subs :
         - !cmd
             name : "pylon-ng"
+            vars :
+                DPRJ : "pylon-ng"
             subs :
+                - *fetch_cmd 
                 - !cmd
                     name : "PHP5"
                     vars :
                         DVER : "0.19"
-                        DPRJ : "pylon-ng"
                         SETUP_CMD : "/data/x/libs/pylon-ng/modules/setup.sh"
                     subs :
                         - *setup_cmd
                         - *pub_cmd 
-
                 - !cmd
                     name : "PHP7"
                     vars :
                         DVER : "0.20"
-                        DPRJ : "pylon-ng"
                         SETUP_CMD : "/data/x/libs/pylon-ng-0.20/modules/setup.sh"
 
                     subs :
@@ -123,6 +126,7 @@ main : !cmd
                 DVER : ""
                 DPRJ : "rigger-ng"
             subs:
+                - *fetch_cmd 
                 - *pub_cmd
         - !cmd
             name : "cmd-mind"
@@ -130,22 +134,33 @@ main : !cmd
                 DVER : ""
                 DPRJ : "cmd-mind"
             subs:
+                - *fetch_cmd 
                 - *pub_cmd
 
-        # - !cmd
-        #     name : "alisdk"
-        #     vars : 
-        #         PRJ : "aliyun_sdks"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj aliyun_sdks"
-        #     args : *commonargs
-        # - !cmd
-        #     name : "api-hub"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj api-hub"
-        #     args : *prjargs
-        # - !cmd
-        #     name : "mara_sdk"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_sdk"
-        #     args : *commonargs
+        - !cmd
+            name : "alisdk"
+            vars :
+                DVER : ""
+                DPRJ : "aliyun_sdks"
+            subs:
+                - *fetch_cmd 
+                - *pub_cmd
+        - !cmd
+            name : "api-hub"
+            vars :
+                DVER : ""
+                DPRJ : "api-hub"
+            subs:
+                - *fetch_cmd 
+                - *pub_cmd
+        - !cmd
+            name : "mara_sdk"
+            vars :
+                DVER : ""
+                DPRJ : "mara_sdk"
+            subs:
+                - *fetch_cmd 
+                - *pub_cmd
         # - !cmd
         #     name : "xcc_sdks"
         #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_sdks"

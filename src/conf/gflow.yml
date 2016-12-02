@@ -1,0 +1,25 @@
+main: !cmd
+    name : "gflow"
+    subs :
+        - !cmd
+            name : "init"
+            call :  "git flow init"
+        - !cmd
+            name : "feature"
+            subs :
+                - !cmd
+                    name : "start"
+                    call :  "git flow feature &{__CMD__NAME} "
+                    args :
+                        - !arg
+                            name: "name"
+                            hostkey : "n"
+                - !cmd
+                    name : "finish"
+                    args :
+                        - !arg
+                            name: "name"
+                            hostkey : "n"
+                - !cmd
+                    name : "list"
+
