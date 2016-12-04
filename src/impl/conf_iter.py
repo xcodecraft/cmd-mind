@@ -1,6 +1,7 @@
 #coding=utf-8
 import logging
 import utls.prompt
+from  utls.logger import *
 _logger = logging.getLogger()
 
 class node_iter :
@@ -39,7 +40,6 @@ class node_iter :
                 self.save()
                 self.parent  = self.current
                 self.current = i
-                self.current.conf()
                 _logger.debug("match %s ,next to :%s" %(key,self.current.name))
                 return True
         return False
@@ -61,9 +61,9 @@ class node_iter :
                     return False
         return True
     def get_prompter(self,word=""):
-        _logger.debug("[cmd prompt] current: %s, word:%s" %(self.current.name , word))
+        debug_log("[cmd prompt] current: %s, word:%s" %(self.current.name , word),'prompter')
         if len(self.current.subs) > 0 :
-            return utls.prompt.iter(self.current.subs,word, lambda x: x.name )
-        _logger.info("no next cmd prompt ")
+            return utls.prompt.iter(self.current.subs,word, lambda x: getattr(x,'name') )
+        info_log("no next cmd prompt ", 'prompter')
         return None
 

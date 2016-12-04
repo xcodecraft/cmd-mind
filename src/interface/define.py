@@ -2,32 +2,57 @@
 import error,calls
 import os,string,logging
 import utls.prompt
+import copy
 from   subprocess import *
 from   utls.var_proc import *
+from utls.logger import *
 _logger = logging.getLogger()
 class conf_obj :
-    name = ""
     def echo(self):
         print(self.name)
     def on_load(self):
         pass 
     def is_match(self,key) :
         pass
-
     def report(self,cmder) :
-        pass
-    def prompt(self,note_iter,cmder):
-        return self.name
-    def conf(self):
         pass
 
 class load_utls  :
     def do_load_of(self,k) :
-        if (self.__dict__.has_key(k)) :
-            if isinstance(self.__dict__[k],str) :
-                self.__dict__[k] = utls.var_proc.value_of(self.__dict__[k])
-            if isinstance(self.__dict__[k],conf_obj) :
-                self.__dict__[k].on_load()
+        src_dict = self.__dict__
+        dst_dict = self.__dict__
+        if (src_dict.has_key(k)) :
+            if isinstance(src_dict[k],str) :
+                ori = src_dict[k] 
+                val = utls.var_proc.value_of(ori)
+                dst_dict[k] = val
+                info_log("self.%s :  %s (%s)" %(k,val,ori),"load")
+            if isinstance(src_dict[k],conf_obj) :
+                src_dict[k].on_load()
+
+class using(conf_obj) :
+    origin  = None 
+    cmd     = None
+    def __getattr__(self,name):
+        if self.cmd is not None :
+            if  hasattr(self.cmd,name) :
+                val = getattr(self.cmd,name)
+                debug_log("using cmd.%s : %s"  %(name,val), 'using')
+                return val 
+        raise AttributeError()
+    def echo(self):
+        pass
+    def on_load(self):
+        self.cmd = copy.deepcopy(self.origin)
+        self.cmd.on_load()
+    def is_match(self,key,strict=False) :
+        return self.cmd.is_match(key,strict)
+    def report(self,cmder) :
+        return self.cmd.report()
+    def help(self,cmdlevel) :
+        return self.cmd.help(cmdlevel)
+    def check(self) :
+        return self.cmd.check()
 
 class cmd(conf_obj,load_utls) :
     subs    = []
@@ -37,13 +62,11 @@ class cmd(conf_obj,load_utls) :
     call    = None
     name    = ""
 
-    def conf(self):
-        os.environ['_CMD_NAME'] = self.name
-        for sub in self.subs :
-            sub.conf()
     def on_load(self):
+        info_log("cmd %s" %(self) ,"load")
         for k,v in self.vars.items() :
             os.environ[k] = v  
+            info_log("set %s =  %s" %(k,v) ,"load")
         self.do_load_of('call')
         self.do_load_of('name')
         for sub in self.subs :

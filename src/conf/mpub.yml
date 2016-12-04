@@ -101,7 +101,8 @@ main : !cmd
             vars :
                 DPRJ : "pylon-ng"
             subs :
-                - *fetch_cmd 
+                - !using 
+                  origin : *fetch_cmd
                 - !cmd
                     name : "PHP5"
                     vars :
@@ -117,8 +118,10 @@ main : !cmd
                         SETUP_CMD : "/data/x/libs/pylon-ng-0.20/modules/setup.sh"
 
                     subs :
-                        - *setup_cmd
-                        - *pub_cmd
+                        - !using 
+                          origin : *setup_cmd
+                        - !using 
+                          origin : *pub_cmd
 
         - !cmd
             name : "rigger-ng"
@@ -126,16 +129,20 @@ main : !cmd
                 DVER : ""
                 DPRJ : "rigger-ng"
             subs:
-                - *fetch_cmd 
-                - *pub_cmd
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
         - !cmd
             name : "cmd-mind"
             vars :
                 DVER : ""
                 DPRJ : "cmd-mind"
             subs:
-                - *fetch_cmd 
-                - *pub_cmd
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
 
         - !cmd
             name : "alisdk"
@@ -143,24 +150,30 @@ main : !cmd
                 DVER : ""
                 DPRJ : "aliyun_sdks"
             subs:
-                - *fetch_cmd 
-                - *pub_cmd
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
         - !cmd
             name : "api-hub"
             vars :
                 DVER : ""
                 DPRJ : "api-hub"
             subs:
-                - *fetch_cmd 
-                - *pub_cmd
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
         - !cmd
             name : "mara_sdk"
             vars :
                 DVER : ""
                 DPRJ : "mara_sdk"
             subs:
-                - *fetch_cmd 
-                - *pub_cmd
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
         # - !cmd
         #     name : "xcc_sdks"
         #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_sdks"
@@ -203,6 +216,8 @@ main : !cmd
                 DVER : ""
                 DPRJ : "louis-web"
             subs:
-                - *fetch_cmd 
-                - *pub_cmd
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
 
