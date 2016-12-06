@@ -109,8 +109,10 @@ main : !cmd
                         DVER : "0.19"
                         SETUP_CMD : "/data/x/libs/pylon-ng/modules/setup.sh"
                     subs :
-                        - *setup_cmd
-                        - *pub_cmd 
+                        - !using 
+                          origin : *setup_cmd
+                        - !using 
+                          origin : *pub_cmd
                 - !cmd
                     name : "PHP7"
                     vars :
