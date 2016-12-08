@@ -27,12 +27,17 @@ if __name__ == '__main__':
         data     = impl.conf_yaml.load_conf(conf,"!","define.")
         cmder    = xcmd.commander(mcmd,cmd_line)
         iter     = impl.conf_iter.node_iter(data)
-        if not iter.match(cmder) :
-            impl.console.complement(cmder,iter)
-        if iter.match(cmder) :
-            cmder.do(iter)
-        else:
-            print("\nerror cmd!")
+        while True :
+            if not iter.match(cmder) :
+                impl.console.complement(cmder,iter)
+            if len(cmder.cmds) > 0  and cmder.cmds[0] == 'quit' :
+                print("\nBye!\n")
+                break
+            if iter.match(cmder) :
+                cmder.do(iter)
+                cmder.clear()
+            else:
+                print("\nerror cmd!")
     except error.icmd_exception as e:
         print("")
         print(e)

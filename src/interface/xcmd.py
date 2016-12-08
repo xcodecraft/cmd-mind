@@ -9,6 +9,10 @@ class commander :
         #self.cmds.append(name)
         impl.cmd_parser.parse(cmdline,self)
 
+    def clear(self):
+        self.cmds = []
+        self.args = {}
+
     def show(self):
         print(self)
     def __str__(self):
