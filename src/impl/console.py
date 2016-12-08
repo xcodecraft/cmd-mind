@@ -66,7 +66,6 @@ class cmd_io :
 
 
         backing = False 
-        print(node_iter.current.help())
         with  console_mode() :
             while True:
                     ch = self.get_char()

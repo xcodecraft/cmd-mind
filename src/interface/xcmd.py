@@ -35,3 +35,6 @@ class commander :
         self.args = {}
     def do(self,iter):
         iter.current.do(self)
+
+    def help(self,iter):
+        print(iter.current.help())

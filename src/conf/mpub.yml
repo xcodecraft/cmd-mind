@@ -1,5 +1,5 @@
-args1 : &commonargs
-    - !arg &tag_arg 
+all_args: 
+    - !arg &arg_tag 
           name    : "tag"
           hotkey  : "t"
           must:  True
@@ -10,14 +10,14 @@ args1 : &commonargs
           values: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
               args: "${DPRJ} 5"
-    - !arg &group_arg
+    - !arg &arg_group
           name   : "group"
           hotkey : "g"
           call   : "--host $group"
           values : !pipe
               cmd : "${CMD_ROOT}/ext/read_ini"
               args: "-f /data/x/tools/mara-pub/projects/${DPRJ}/hosts"
-    - !arg &host_arg
+    - !arg &arg_host
           name   : "host"
           hotkey : "h"
           call   : "--host $host"
@@ -25,11 +25,7 @@ args1 : &commonargs
               cmd : "${CMD_ROOT}/ext/read_ini"
               args: "-f /data/x/tools/mara-pub/projects/${DPRJ}/hosts -a "
 
-args2 : &prjargs
-    - *tag_arg 
-    - *host_arg 
-    - *group_arg 
-    - !arg &env_arg
+    - !arg &arg_env
           name   : "env"
           hotkey : "e"
           must   : True
@@ -42,8 +38,6 @@ args2 : &prjargs
             - "beta"
             - "online"
             - "online-b"
-
-args3 : 
     - !arg &all_group
           name   : "group"
           hotkey : "g"
@@ -58,7 +52,19 @@ args3 :
           values : !pipe
               cmd : "${CMD_ROOT}/ext/read_ini"
               args: "-f /data/x/tools/mara-pub/conf/all.hosts -a"
-cmd1: 
+
+args1 : &commonargs
+    - *arg_tag 
+    - *arg_host 
+    - *arg_group 
+
+args2 : &prjargs
+    - *arg_tag 
+    - *arg_host 
+    - *arg_group 
+    - *arg_env
+
+reuse_cmds: 
     - !cmd &pub_cmd
         name : "pub"
         call : "/data/x/tools/mara-pub/rocket_pub.sh --prj ${DPRJ} "
@@ -83,7 +89,7 @@ cmd1:
         args : 
             - *all_group 
             - *all_host
-            - *env_arg
+            - *arg_env
             - !arg 
                   name   : "tag"
                   hotkey : "t"
@@ -217,37 +223,39 @@ main : !cmd
                   origin : *prj_pub_cmd
 
 
-        # - !cmd
-        #     name : "xcc_env"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_env"
-        #     args : *commonargs
-        #
-        # - !cmd
-        #     name : "mara_env"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara_env"
-        #     args : *commonargs
-        #         
-        # - !cmd
-        #     name : "marathon-web"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj marathon-web"
-        #     args : *prjargs
-        #
-        # - !cmd
-        #     name : "user-gateway"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj user-gateway"
-        #     args : *commonargs
-        #
-        # - !cmd
-        #     name : "mara-pub"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj mara-pub --host dev"
-        #     args : 
-        #         - *tag_arg 
-        #
-        # - !cmd
-        #     name : "uac"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj uac"
-        #     args : *prjargs
-        #
+
+        - !cmd
+            name : "mara-hd"
+            vars :
+                DVER : ""
+                DPRJ : "mara-hd"
+            subs:
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *prj_pub_cmd
+
+        - !cmd
+            name : "user-gateway"
+            vars :
+                DVER : ""
+                DPRJ : "user-gateway"
+            subs:
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *prj_pub_cmd
+
+        - !cmd
+            name : "uac"
+            vars :
+                DVER : ""
+                DPRJ : "uac"
+            subs:
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *prj_pub_cmd
         - !cmd
             name : "louis-web"
             vars :
@@ -257,5 +265,5 @@ main : !cmd
                 - !using 
                   origin : *fetch_cmd
                 - !using 
-                  origin : *pub_cmd
+                  origin : *prj_pub_cmd
 

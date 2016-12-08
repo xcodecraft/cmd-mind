@@ -22,7 +22,11 @@ if __name__ == '__main__':
 
     import xcmd , define,error
     import impl.console , impl.cmd_parser, impl.conf_iter ,impl.conf_yaml
-
+    curpath = os.path.dirname(os.path.realpath(__file__))
+    version = open(curpath  + "/version.txt").readline()
+    
+    print("Welcome use XCodeCraft cmd-mind! Use 'quit' Exit!")
+    print("version:%s" %version)
     try:
         data     = impl.conf_yaml.load_conf(conf,"!","define.")
         cmder    = xcmd.commander(mcmd,cmd_line)
@@ -36,8 +40,11 @@ if __name__ == '__main__':
             if iter.match(cmder) :
                 cmder.do(iter)
                 cmder.clear()
+                print('\n--------------done! ------------------')
             else:
                 print("\nerror cmd!")
+                print('----------------help------------------')
+                cmder.help(iter)
     except error.icmd_exception as e:
         print("")
         print(e)
