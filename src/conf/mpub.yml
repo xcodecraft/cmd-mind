@@ -29,7 +29,7 @@ args2 : &prjargs
     - *tag_arg 
     - *host_arg 
     - *group_arg 
-    - !arg 
+    - !arg &env_arg
           name   : "env"
           hotkey : "e"
           must   : True
@@ -65,6 +65,25 @@ cmd1:
         args : 
             - *all_group 
             - *all_host
+            - !arg 
+                  name   : "tag"
+                  hotkey : "t"
+                  must   : True
+                  call   : "--tag $tag"
+                  default: !pipe
+                      cmd : "${CMD_ROOT}/ext/last_tag"
+                      args: "${DPRJ} 1 ${DVER}."
+                  values: !pipe
+                      cmd : "${CMD_ROOT}/ext/last_tag"
+                      args: "${DPRJ} 5 ${DVER}."
+
+    - !cmd &prj_pub_cmd
+        name : "pub"
+        call : "/data/x/tools/mara-pub/rocket_pub.sh --prj ${DPRJ} "
+        args : 
+            - *all_group 
+            - *all_host
+            - *env_arg
             - !arg 
                   name   : "tag"
                   hotkey : "t"
@@ -176,11 +195,28 @@ main : !cmd
                   origin : *fetch_cmd
                 - !using 
                   origin : *pub_cmd
-        # - !cmd
-        #     name : "xcc_sdks"
-        #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_sdks"
-        #     args : *commonargs
-        #
+        - !cmd
+            name : "xcc_sdks"
+            vars :
+                DVER : ""
+                DPRJ : "xcc_sdks"
+            subs:
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *pub_cmd
+        - !cmd
+            name : "marathon-web"
+            vars :
+                DVER : ""
+                DPRJ : "marathon-web"
+            subs:
+                - !using 
+                  origin : *fetch_cmd
+                - !using 
+                  origin : *prj_pub_cmd
+
+
         # - !cmd
         #     name : "xcc_env"
         #     call : "/data/x/tools/mara-pub/rocket_pub.sh --prj xcc_env"
