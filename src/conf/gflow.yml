@@ -9,13 +9,21 @@ main: !cmd
             subs :
                 - !cmd
                     name : "start"
-                    call :  "git flow feature &{__CMD__NAME} "
+                    call :  "git flow feature start $name "
                     args :
                         - !arg
                             name: "name"
                             hostkey : "n"
                 - !cmd
                     name : "finish"
+                    call :  "git flow feature finish $name"
+                    args :
+                        - !arg
+                            name: "name"
+                            hostkey : "n"
+                - !cmd
+                    name : "delete"
+                    call :  "git flow feature delete $name"
                     args :
                         - !arg
                             name: "name"
@@ -23,3 +31,29 @@ main: !cmd
                 - !cmd
                     name : "list"
 
+        - !cmd
+            name : "release"
+            subs :
+                - !cmd
+                    name : "start"
+                    call :  "git flow release start $name "
+                    args :
+                        - !arg
+                            name: "name"
+                            hostkey : "n"
+                - !cmd
+                    name : "finish"
+                    call :  "git flow release finish $name"
+                    args :
+                        - !arg
+                            name: "name"
+                            hostkey : "n"
+                - !cmd
+                    name : "delete"
+                    call :  "git flow release delete $name"
+                    args :
+                        - !arg
+                            name: "name"
+                            hostkey : "n"
+                - !cmd
+                    name : "list"
