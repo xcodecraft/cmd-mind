@@ -118,6 +118,22 @@ reuse_cmds:
         name : "fetch"
         call  : '${CMD_ROOT}/ext/git_fetch ${HOME}/devspace/${DPRJ}'
 
+    - !cmd &prj_cmd
+        name : "${DPRJ}"
+        subs:
+            - !using 
+              origin : *fetch_cmd
+            - !using 
+              origin : *prj_pub_cmd
+
+    - !cmd &common_cmd
+        name : "${DPRJ}"
+        subs:
+            - !using 
+              origin : *fetch_cmd
+            - !using 
+              origin : *pub_cmd
+
 main : !cmd
     name : "mpub"
     subs :
@@ -150,120 +166,70 @@ main : !cmd
                         - !using 
                           origin : *pub_cmd
 
-        - !cmd
-            name : "rigger-ng"
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "rigger-ng"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *pub_cmd
-        - !cmd
-            name : "cmd-mind"
+            origin : *common_cmd
+
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "cmd-mind"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *pub_cmd
+            origin : *common_cmd
 
-        - !cmd
-            name : "alisdk"
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "aliyun_sdks"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *pub_cmd
-        - !cmd
-            name : "api-hub"
+            origin : *common_cmd
+
+
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "api-hub"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *pub_cmd
-        - !cmd
-            name : "mara_sdk"
+            origin : *common_cmd
+
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "mara_sdk"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *pub_cmd
-        - !cmd
-            name : "xcc_sdks"
+            origin : *common_cmd
+
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "xcc_sdks"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *pub_cmd
-        - !cmd
-            name : "marathon-web"
+            origin : *common_cmd
+
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "marathon-web"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *prj_pub_cmd
+            origin : *prj_cmd
 
-
-
-        - !cmd
-            name : "mara-hd"
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "mara-hd"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *prj_pub_cmd
+            origin : *prj_cmd
 
-        - !cmd
-            name : "user-gateway"
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "user-gateway"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *prj_pub_cmd
+            origin : *prj_cmd
 
-        - !cmd
-            name : "uac"
+
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "uac"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *prj_pub_cmd
-        - !cmd
-            name : "louis-web"
+            origin : *prj_cmd
+        - !using
             vars :
                 DVER : ""
                 DPRJ : "louis-web"
-            subs:
-                - !using 
-                  origin : *fetch_cmd
-                - !using 
-                  origin : *prj_pub_cmd
+            origin : *prj_cmd
 
