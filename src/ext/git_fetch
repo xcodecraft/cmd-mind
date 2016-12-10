@@ -1,0 +1,4 @@
+#!/bin/bash
+WHERE=$1
+cd $WHERE
+git fetch --all 

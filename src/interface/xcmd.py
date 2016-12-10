@@ -1,13 +1,22 @@
 #coding=utf-8
+import impl.cmd_parser
 class commander :
     cmds = []
     args = {}
-    def __init__(self,name):
-        self.cmds.append(name)
+    name = ""
+    def __init__(self,name,cmdline = ""):
+        self.name = name 
+        #self.cmds.append(name)
+        impl.cmd_parser.parse(cmdline,self)
+
+    def clear(self):
+        self.cmds = []
+        self.args = {}
+
     def show(self):
         print(self)
     def __str__(self):
-        cmd = ""
+        cmd = self.name
         for c in self.cmds :
             cmd = "%s %s" %(cmd,c)
         for k,v in self.args.items():
@@ -26,3 +35,6 @@ class commander :
         self.args = {}
     def do(self,iter):
         iter.current.do(self)
+
+    def help(self,iter):
+        print(iter.current.help())

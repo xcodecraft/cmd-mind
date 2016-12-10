@@ -1,7 +1,7 @@
 #coding=utf8
 import re , os , yaml, logging
 # import interface
-import utls.dbc
+import utls.dbc, utls.var_proc
 # from utls.rg_io import rg_logger
 
 
@@ -26,5 +26,8 @@ class loader:
         doc = self.load()
         if ori is not None:
             doc = doc.replace(ori,"!!python/object:" + new)
+        # doc  = utls.var_proc.value_of(doc) 
         data = yaml.load(doc)
-        return data
+        main = data['main']
+        main.on_load()
+        return main

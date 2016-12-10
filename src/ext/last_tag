@@ -1,0 +1,10 @@
+#!/bin/bash
+PRJ=$1
+NUM=$2
+if  test $# -eq 3 ; then  
+    TARGET=$3
+else
+    TARGET="."
+fi
+cd $HOME/devspace/$PRJ
+ git tag | grep $TARGET |  sort -r -n -k 4 -t . | head  -n  $NUM

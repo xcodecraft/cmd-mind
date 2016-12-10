@@ -124,9 +124,10 @@ def parse(input,cmder):
                 continue
             if c == status.tag_sep :
                 val = status.target
-                args[key] = val
-                status.target = ""
-                status.to_unknow()
+                if len(val.strip(status.tag_sep)) > 0 :
+                    args[key] = val
+                    status.target = ""
+                    status.to_unknow()
                 continue
             status.append(c)
     cmder.cmds = cmds

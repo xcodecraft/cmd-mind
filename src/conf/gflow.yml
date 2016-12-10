@@ -1,0 +1,104 @@
+reuse :
+    - !cmd &branch_cmd
+        name : "${BRANCH}"
+        subs :
+            - !cmd
+                name : "start"
+                call :  "git flow ${BRANCH} start "
+                args :
+                    - !arg
+                        name: "name"
+                        call: "$name"
+                        hotkey : "n"
+            - !cmd
+                name : "finish"
+                call :  "git flow ${BRANCH} finish "
+                args :
+                    - !arg
+                        name: "name"
+                        call: "$name"
+                        hotkey : "n"
+            - !cmd
+                name : "delete"
+                call :  "git flow ${BRANCH} delete $name"
+                args :
+                    - !arg
+                        name: "name"
+                        call: "$name"
+                        hotkey : "n"
+            - !cmd
+                name : "list"
+                call :  "git flow ${BRANCH} "
+
+
+main: !cmd
+    name : "gflow"
+    subs :
+        - !cmd
+            name : "init"
+            call :  "git flow init"
+        - !cmd
+            name : "ci"
+            call :  "git commit  -a  "
+            args :
+                - !arg
+                    name   : "message"
+                    must   : True
+                    hotkey : "m"
+        - !cmd 
+            name : "feature"
+            subs :
+                - !cmd
+                    name : "start"
+                    call :  "git flow feature start "
+                    args :
+                        - !arg
+                            name: "name"
+                            call: "$name"
+                            hotkey : "n"
+                - !cmd
+                    name : "finish"
+                    call :  "git flow feature finish "
+                    args :
+                        - !arg
+                            name: "name"
+                            call: "$name"
+                            hotkey : "n"
+                - !cmd
+                    name : "delete"
+                    call :  "git flow feature delete "
+                    args :
+                        - !arg
+                            name: "name"
+                            call: "$name"
+                            hotkey : "n"
+
+                - !cmd
+                    name : "publish"
+                    call :  "git flow feature publish "
+                    args :
+                        - !arg
+                            name: "name"
+                            call: "$name"
+                            hotkey : "n"
+                - !cmd
+                    name : "track"
+                    call :  "git flow feature track "
+                    args :
+                        - !arg
+                            name: "name"
+                            call: "$name"
+                            hotkey : "n"
+                - !cmd
+                    name : "list"
+                    call :  "git flow feature "
+        - !using
+            vars : 
+                BRANCH : "release"
+            origin : *branch_cmd 
+
+        - !using
+            vars : 
+                BRANCH : "hotfix"
+            origin : *branch_cmd 
+

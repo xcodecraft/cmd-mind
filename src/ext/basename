@@ -1,0 +1,4 @@
+#!/bin/bash
+CUR=`pwd`
+NAME=`basename $CUR`
+echo $NAME
