@@ -1,9 +1,9 @@
 all_args: 
     - !arg &arg_tag 
-          name    : "tag"
-          hotkey  : "t"
-          must:  True
-          call : "--tag $tag"
+          name   : "tag"
+          hotkey : "t"
+          must   : True
+          call   : "--tag $tag"
           default: !pipe
               cmd : "${CMD_ROOT}/ext/last_tag"
               args: "${DPRJ} 1"
@@ -120,7 +120,13 @@ reuse_cmds:
 
     - !cmd &ver_cmd
         name : "ver"
-        call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/bin/ver"'
+        call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/tools/mara_bin/prj_cmd.sh -p ${DPRJ} -c ver"'
+        args : 
+            - *all_group 
+
+    - !cmd &restart_cmd
+        name : "ver"
+        call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/tools/mara_bin/prj_cmd.sh -p ${DPRJ} -c restart"'
         args : 
             - *all_group 
 
@@ -131,6 +137,10 @@ reuse_cmds:
               origin : *fetch_cmd
             - !using 
               origin : *prj_pub_cmd
+            - !using 
+              origin : *ver_cmd
+            - !using 
+              origin : *restart_cmd
 
     - !cmd &common_cmd
         name : "${DPRJ}"
@@ -139,6 +149,10 @@ reuse_cmds:
               origin : *fetch_cmd
             - !using 
               origin : *pub_cmd
+            - !using 
+              origin : *ver_cmd
+            - !using 
+              origin : *restart_cmd
 
 main : !cmd
     name : "mpub"
