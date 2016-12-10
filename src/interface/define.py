@@ -33,6 +33,7 @@ class load_utls  :
 class using(conf_obj) :
     origin  = None 
     cmd     = None
+    vars    = {}
     def __getattr__(self,name):
         if self.cmd is not None :
             if  hasattr(self.cmd,name) :
@@ -40,9 +41,13 @@ class using(conf_obj) :
                 debug_log("using cmd.%s : %s"  %(name,val), 'using')
                 return val 
         raise AttributeError()
+
     def echo(self):
         pass
     def on_load(self):
+        for k,v in self.vars.items() :
+            os.environ[k] = v  
+            info_log("set %s =  %s" %(k,v) ,"load")
         self.cmd = copy.deepcopy(self.origin)
         self.cmd.on_load()
     def is_match(self,key,strict=False) :
@@ -184,6 +189,8 @@ class cmd(conf_obj,load_utls) :
     def do(self,cmder):
 
         execmd =  self.getcmd()
+        # import pdb
+        # pdb.set_trace()
         for arg in self.args:
             val = None
             if cmder.args.has_key(arg.name) :
@@ -191,9 +198,10 @@ class cmd(conf_obj,load_utls) :
             if cmder.args.has_key(arg.hotkey) :
                 val = cmder.args[arg.hotkey]
             if arg.must == False and val == None :
+                info_log("ignore arg %s" %(arg.name),'do')
                 continue
             execmd  = "%s %s" %(execmd, arg.getcmd(val))
-        _logger.info("cmd: %s" %(execmd))
+        info_log("cmd: %s" %(execmd),'do')
         print("\n%s" %execmd)
         os.system(execmd)
 
@@ -232,6 +240,7 @@ class arg(conf_obj,load_utls) :
             return "--%s %s" %(self.name,val)
         else:
             try :
+                debug_log(self.call,'call')
                 return string.Template(self.call).substitute({self.name : val})
             except :
                 raise error.icmd_exception("error! args call:[%s], but key is: %s"%(self.call,self.name))
@@ -251,6 +260,8 @@ class arg(conf_obj,load_utls) :
 
     def get_values(self):
         values = self.values
+        if values is None : 
+            return []
         if isinstance(self.values , pipe) :
             values = self.values.get()
         return values
