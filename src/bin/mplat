@@ -1,6 +1,0 @@
-CUR_DIR=$(cd "$(dirname "$0")"; pwd)
-export CMD_ROOT=`dirname $CUR_DIR`
-export ICMD_CONF=$CUR_DIR/../conf/mplat.yml
-export ICMD_MAIN=mplat
-$CUR_DIR/../icmd $*
-
