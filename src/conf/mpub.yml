@@ -118,6 +118,12 @@ reuse_cmds:
         name : "fetch"
         call  : '${CMD_ROOT}/ext/git_fetch ${HOME}/devspace/${DPRJ}'
 
+    - !cmd &ver_cmd
+        name : "ver"
+        call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/bin/ver"'
+        args : 
+            - *all_group 
+
     - !cmd &prj_cmd
         name : "${DPRJ}"
         subs:
@@ -170,6 +176,11 @@ main : !cmd
             vars :
                 DVER : ""
                 DPRJ : "rigger-ng"
+            origin : *common_cmd
+        - !using
+            vars :
+                DVER : ""
+                DPRJ : "mara-bin"
             origin : *common_cmd
 
         - !using

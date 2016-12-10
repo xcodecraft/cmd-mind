@@ -41,15 +41,3 @@ main: !cmd
                 - *group_arg 
                 - *host_arg
 
-        - !cmd
-            name : "beta_pylon_setup"
-            call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/libs/beta/pylon-ng/modules/setup.sh"'
-            args :
-                - *group_arg 
-                - *host_arg
-        - !cmd
-            name : "pylon_setup"
-            call : '/data/x/tools/mara-pub/rocket_cmd.sh --command "/data/x/libs/pylon-ng/modules/setup.sh"'
-            args :
-                - *group_arg 
-                - *host_arg
