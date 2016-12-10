@@ -180,7 +180,12 @@ main : !cmd
         - !using
             vars :
                 DVER : ""
-                DPRJ : "mara-bin"
+                DPRJ : "mara_bin"
+            origin : *common_cmd
+        - !using
+            vars :
+                DVER : ""
+                DPRJ : "team"
             origin : *common_cmd
 
         - !using
