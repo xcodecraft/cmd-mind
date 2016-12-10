@@ -54,7 +54,7 @@ class using(conf_obj) :
         return self.cmd.is_match(key,strict)
     def report(self,cmder) :
         return self.cmd.report()
-    def help(self,cmdlevel) :
+    def help(self,cmdlevel=1) :
         return self.cmd.help(cmdlevel)
     def check(self) :
         return self.cmd.check()
